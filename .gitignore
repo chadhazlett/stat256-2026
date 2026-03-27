@@ -1,0 +1,21 @@
+# LaTeX aux files
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.vrb
+*.bbl
+*.blg
+_region_.tex
+*.tex.bak
+
+# OS files
+.DS_Store
+
+# Pre-2026 archive (large, not for the site)
+pre2026/
