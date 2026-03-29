@@ -1,0 +1,250 @@
+\documentclass[PS]{syllabus}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{url}
+\usepackage{enumitem}
+\usepackage[pdftex, bookmarksopen=true, bookmarksnumbered=true, pdfstartview=FitH, breaklinks=true, urlbordercolor={0 1 1}, citebordercolor={0 1 0}, colorlinks = true]{hyperref}
+
+\setlength{\parskip}{\baselineskip}
+
+\setlist[itemize]{noitemsep, topsep=0pt}
+
+\textheight 9in
+\textwidth 6.5in
+\topmargin -.5in
+\oddsidemargin 0in
+\evensidemargin 0in
+
+\newcommand{\percent}{\ensuremath{\%\;}}
+
+\begin{document}
+\title{Stat 256: Causality \\ Spring 2026}
+
+\begin{syllabus}
+\begin{center}
+\vspace{-.5in}
+\textbf{Professor}: Chad Hazlett\\
+\href{mailto: chazlett@ucla.edu}{chazlett@ucla.edu}  \\
+\textit{Class}:  TBD  \\
+\textit{Office Hours}:  TBD  \\
+\bigskip
+\textbf{Teaching Assistant}: TBD  \\
+\textit{Office Hours}:  TBD \\
+\end{center}
+
+\section{Goals}
+
+Very often, the goal of quantitative research is to establish or measure the causal effect of one variable on another. In many circumstances we cannot randomize which units receive a ``treatment'' of interest, complicating efforts to learn the effect of that treatment.  Even when the treatment variable can be randomly manipulated (as in a randomized experiment), this does not enable us to answer all questions of interest, such as those relating to mechanism and mediation problems. Other times, even putatively ``descriptive'' statistical efforts involve problems such as case selection, missingness, attrition, and generalization---all of which actually require causal assumptions.
+
+Fortunately, recent decades have seen an explosion of work on causality and turned what was previously the realm of philosophical debate into a mathematically tractable language (or really, two languages---more on that momentarily). Our goal is not to train you in every aspect of this quickly evolving area, but to provide you with a working understanding of the field, particularly as it applies to the challenges of real applied research. Specifically, this course aims to:
+\begin{itemize}
+\item equip you with tools for careful causal thinking,
+\item equip you to read causal inference papers on your own and to critique the conclusions they make, and
+\item provide you with tools for applied research, and the wisdom required to (i) avoid abusing these tools and (ii) carefully assess the credibility of claims made by other researchers in their applied work.
+\end{itemize}
+
+\section{Approach}
+
+Our approach to this material focuses on two principles: bilingualism, and feasibility.
+
+\textbf{Bilingualism.} Two main ``languages'' of causal reasoning dominate academic work on causality:
+\begin{itemize}
+\item  An approach rooted in ``structural causal models'' (SCMs), often represented graphically and particularly with ``directed acyclic graphs'' (DAGs). This is most closely identified with UCLA's own Judea Pearl.\footnote{As well as foundational work by Peter Spirtes, Clark Glymour, Jin Tian, Thomas Verma, Jamie Robins, Sander Greenland (also at UCLA), Tyler VanderWeele, Miguel Hernan, and others.}
+\item The ``potential outcomes'' (PO) language, built mainly on initial work by Jerzy Neyman as championed and elaborated by Don Rubin and many others.
+\end{itemize}
+
+This course takes the stance that both approaches are valuable and engage mostly the same underlying commitments, just emphasizing different perspectives. POs can be seen as arising from SCMs/DAGs. The causal estimands in which we are interested are often easy to write down using POs, as are the assumptions we must make in order to estimate these from data. DAGs are particularly effective at shedding light on what it would take to believe causal assumptions, and at showing you how they might be violated either by nature or by choices the analyst made. In some cases, POs naturally lead to identification ideas that are non-obvious from the DAG perspective, particularly where parametric restrictions are involved; other times it is the other way around. \textit{A goal of this course is to build fluency in both languages to maximize our ability to see opportunities for making causal inferences, and to avoid errors in causal reasoning.}
+
+\textbf{Feasibility.} A second major theme is a focus on practicality: (i) we focus on those aspects of causal inference that are useful to applied researchers being transparent and careful about what they can and cannot claim; and (ii) the credibility of inferences made using these approaches comes down to the assumptions on which they rest, so understanding those assumptions and what it would mean to believe them is of paramount importance. Practically, this means:
+\begin{itemize}
+\item Examining commonly relied-upon identification strategies---``clever ideas'' for making causal claims from observational data. For each we must ask how one would justify or evaluate the credibility of the required assumptions, through both PO and DAG lenses.
+
+\item A focus on \textbf{partial identification and sensitivity analysis}: the assumptions required to point identify a causal quantity may not be defensible, but applied researchers should characterize how results might change under violations and what we must be prepared to believe in order to arrive at a particular causal conclusion.
+
+\item  This course is \textit{not} a deep dive into all frontier areas of causal inference: some areas in which recent advances have been made may remain too distant from empirical practice to be suitable here. But it will give you the notation and toolkit to understand and critically assess those proposals.
+\end{itemize}
+
+
+\section{Organization}
+
+\textbf{Flexibility and updating.}  \textit{Everything below is subject to change}. If you have a good idea for something different to cover or a different type of assignment, we have the flexibility to consider it. This is still a relatively new class, and your input shapes what it will look like in the future.
+
+\textbf{The course website is definitive.} When in doubt, trust the information, deadlines, etc.\ on the course website.
+
+\textbf{Materials.} As we come to each unit, we will share the relevant references and reading expectations via the course website.  \textit{Often there will not be readings. When there are, we keep them minimal, so please do them.}
+
+You should obtain a copy of:
+\begin{itemize}
+\item Pearl, J., Glymour, M., \& Jewell, N. P. (2016). \textit{Causal Inference in Statistics: A Primer}. John Wiley \& Sons.
+\end{itemize}
+
+The following is freely available online and will be used throughout:
+\begin{itemize}
+\item Hern\'an, M.A.\ \& Robins, J.M.\ (2024). \textit{Causal Inference: What If}. Chapman \& Hall/CRC. Available at: \url{https://www.hsph.harvard.edu/miguel-hernan/causal-inference-book/}
+\end{itemize}
+
+Additional recommended references (not required):
+\begin{itemize}
+\item Imbens, G.W.\ \& Rubin, D.B.\ (2015). \textit{Causal Inference in Statistics, Social, and Biomedical Sciences}. Cambridge University Press.
+\item Cunningham, S. (2021). \textit{Causal Inference: The Mixtape}. Yale University Press. Freely available at \url{https://mixtape.scunning.com/}.
+\item Huntington-Klein, N. (2022). \textit{The Effect: An Introduction to Research Design and Causality}. Chapman \& Hall/CRC. Freely available at \url{https://theeffectbook.net/}.
+\end{itemize}
+
+
+\section{Prerequisites}
+
+Students are expected to have proficiency in basic \texttt{R} coding, probability theory, linear algebra, multivariate calculus, and statistics up through inference and regression. For students with strong mathematical and statistics backgrounds, this could be a first course in causal inference. For those less sure of these prerequisites, PS 200C would be a good introduction to both the mathematical requirements and causal inference.
+
+
+\section{Course Outline}
+
+\subsection*{Part I: Core Language and Theory}
+
+\paragraph{Unit 1: The graphical (DAG) approach.}
+\begin{itemize}
+\item Graph basics: nodes, edges, and missing edges.
+\item Relation to structural causal models (SCMs).
+\item D-separation and conditional independence.
+\item Back-door criterion and adjustment.
+\item Front-door criterion.
+\item The \textit{do}-calculus.
+\item Origins of potential outcomes from SCMs.
+\end{itemize}
+Primary reference: Pearl, Glymour, \& Jewell (2016), \textit{Primer}.
+
+\paragraph{Unit 2: The potential outcomes (PO) approach.}
+\begin{itemize}
+\item Basic definitions, potential outcomes, and causal estimands.
+\item Randomized experiments: identification, estimation, variance.
+\item Conditional ignorability (unconfoundedness) and selection on observables.
+\item Bridging POs and DAGs: equivalences and complementarities.
+\end{itemize}
+
+\subsection*{Part II: Identification Strategies}
+
+\paragraph{Unit 3: Selection on observables (SOO) in practice.}
+
+The most commonly invoked identification strategy amounts to some version of assuming no unobserved confounders and then adjusting for observed covariates. The number of approaches for doing this has exploded. They differ only in \textit{how} they approximate statistical conditioning, not in their causal sophistication. We cover the main families:
+\begin{itemize}
+\item Sub-classification, matching, and regression
+\item Propensity score methods (matching, weighting)
+\item Covariate-balancing weights
+\item Brief survey of combined/double-robust approaches (augmented IPW, double-ML, TMLE)
+\item Sensitivity analysis
+\end{itemize}
+
+\paragraph{Unit 4: Instrumental variables}
+\begin{itemize}
+\item IV assumptions in PO and DAG frameworks
+\item LATE and complier interpretation
+\item Sensitivity analysis
+\end{itemize}
+
+\paragraph{Unit 5: Regression discontinuity.}
+\begin{itemize}
+\item Sharp and fuzzy RD
+\item Bandwidth selection, local polynomial estimation
+\item Diagnostics: manipulation testing, covariate balance
+\item Generalizability concerns
+\end{itemize}
+
+\paragraph{Unit 6: Difference-in-differences/ no time-varying confounding)}
+\begin{itemize}
+\item The canonical two-period, two-group case
+\item Parallel trends: meaning, plausibility, falsification efforts
+\item DID $\neq$ two-way fixed effects. Staggered adoption and heterogeneous treatment timing: why classical TWFE fails and modern alternatives (Callaway \& Sant'Anna; Sun \& Abraham; de Chaisemartin \& D'Haultfoeuille), event studies and pre-trend testing
+\item Sensitivity analysis
+\end{itemize}
+
+\paragraph{Unit 7: Time-varying confounding}
+\begin{itemize}
+\item Synthetic control
+\item Interactive fixed effects and related approaches
+\item When parallel trends is too strong: relaxing it
+\end{itemize}
+
+\paragraph{Unit 8: Sensitivity analysis and partial identification.}
+\begin{itemize}
+\item Omitted variable bias (OVB) for bounding OLS.
+\item Sensitivity for IV and other strategies.
+\item Placebo treatments and outcomes.
+\item Stability-controlled quasi-experiments.
+\item Bounds and partial identification more broadly.
+\end{itemize}
+
+\paragraph{Unit 9: Mediation and TRACE}
+\begin{itemize}
+\item Why mediation is a fundamentally harder problem.
+\item Direct and indirect effects: definitions and assumptions.
+\item DAG and PO perspectives on mediation.
+\item Marginal structural models
+\item Separating units rather than paths: the TRACE
+\end{itemize}
+
+\subsection*{Part III: You teach!}
+
+In this section, students will work in groups of \textbf{2--3} to cover advanced topics, presenting them to the class in the form of developed lectures. See ``Presentations'' below for details.
+
+
+\section{Class Requirements and Grading}
+
+\textbf{Problem sets (25\%).} Problem sets are the primary tool for learning. Expect 4--5 over the quarter. Late submissions will not be accepted; if you need an extension, ask \textbf{before} the deadline. Students are encouraged to discuss difficulties, but every step of every problem must be produced by the individual student and all work must be written up independently. \textit{Neither code nor written solutions may be copied.} For analytical questions, include intermediate steps and reasoning. For data analysis, include annotated code. Your submission must list any students with whom you discussed the problems.
+
+\textbf{Advanced topic presentation (25\%).} Working in groups of 2--3, you will choose a topic from a provided list and deliver a \textbf{25-minute lecture plus 5 minutes of Q\&A}. You will also submit, by the end of the quarter, a brief tutorial on the topic that includes a clear explanation, worked examples, and 1--2 problem-set-style questions for the class.
+
+Topics will include (but are not limited to):
+\begin{itemize}
+\item Causal inference in networks/interference
+\item Causal attribution, necessity, sufficiency (causes of effects)
+\item Generalization, transportability, and external validity
+\item Advanced heterogeneous effect estimation (CATE, causal forests)
+\item Negative outcome controls, placebos, and falsification tests
+\item Bounds and partial identification beyond sensitivity analysis
+\item Other identification strategies not covered in class
+\end{itemize}
+
+Expect the following deadlines:
+\begin{itemize}
+\item \textbf{Week 3}: Sign up for groups and topics.
+\item \textbf{Week 6}: Check-in meeting with instructor.
+\item \textbf{Weeks 9--10}: Student-led lectures.
+\item \textbf{Finals week}: All written materials due.
+\end{itemize}
+
+\textbf{Critical review memo (25\%).} (NOTE, THIS IS SUBJECT TO CHANGE/REFINEMENT). An individual written assignment in which you select either (i) a published empirical paper that uses one of the identification strategies covered in the course; or (ii) examine a complicated new method, critique it, offer your proposed refinements, show simulation results, failure modes, or new applications. 
+
+In the case of an empirical paper,
+\begin{itemize}
+\item Explain the paper's identification strategy using both PO and DAG frameworks.
+\item Articulate the key assumptions and evaluate their credibility.
+\item Propose a sensitivity analysis or partial identification exercise: what would you want to see to be convinced (or to know the bounds of what we can learn)?
+\item Offer constructive suggestions for strengthening the causal claims.
+\end{itemize}
+
+In the case of a methods paper,
+\begin{itemize}
+\item Explain the paper's idea both rigorously and with intuition, giving comparisons to other methods and involving any new insights you've acquired. Put it in the landscape of things we learned about in class.
+\item Articulate the key assumptions and argue whether they are workable, or what situations they might be best suited to.
+\item Do new simulations, different from any the authors proposed; demonstrate failure modes worth thinking about. 
+\item If you're lucky and ambitious, propose an extension, improvement, or alternative!
+\end{itemize}
+
+
+Due \textbf{Week 10}. We will discuss suitable papers early in the quarter; you are also welcome to propose your own. We will also have meetings about it along the way, to develop ideas but also as part of the evaluation mechanism.
+
+\textbf{Active-learning activities (25\%).} This course is a seminar and your active engagement is essential. To encourage this, facilitate learning, and to motivate (and record) attendance we will have almost daily in-class activities...yes, a little quiz. These give an immediate way to rehearse and reinforce what you just saw. We will do these for my lectures, and this will be the comprehension questions for the student-led questions. In my other classes, I have replaced problem sets with these entirely. In this class however, we need problem sets for more in-depth skill-development...but we need the in-class activities to facilitate learning, engagement, and because it's the only time to see if you are learning anything without an AI fallback.They will be graded lightly (0, 1 for an attempt that is entirely wrong, 2 for a good attempt, 3 for a great attempt). You can miss two without worrying. There will be no make-up opportunities. If you do not plan to attend regularly, this is not the right course for you!
+
+
+\section{Use of AI Tools}
+
+You are welcome to use AI tools (e.g., ChatGPT, Claude, GitHub Copilot) as learning aids---to check your understanding, debug code, or explore ideas. However:
+\begin{itemize}
+\item Problem set write-ups must reflect \textit{your own} understanding. Using AI to generate solutions you do not understand defeats the purpose and will be apparent, believe it or not!
+\item Your critical review memo must be your own analytical work, but it's okay (and maybe good) to "discuss" your ideas with AI to help you develop your response and look for holes etc. 
+\item If you use AI tools substantively on any assignment, briefly note how (e.g., ``used Claude to debug my R code for Q3''). It's totally okay, and I want to get a sense of usage.
+\end{itemize}
+The goal is to learn the material. AI can help with that if you use it as leverage rather than a way out.
+
+
+\end{syllabus}
+\end{document}
