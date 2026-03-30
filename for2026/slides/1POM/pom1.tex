@@ -1,0 +1,684 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+%\documentclass[handout,xcolor=dvipsnames,pdftex,hyperref={colorlinks=false}]{beamer}
+
+% == Packages for beamer
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{fancybox}
+\usepackage{hyperref}
+\usepackage{amsmath,amssymb,amsfonts,bm}
+\usepackage{wasysym}
+\usepackage{colortbl}
+
+\newcommand{\Plus}{\mathord{\tikz\draw[line width=0.3ex, x=1ex, y=1ex] (0.5,0) -- (0.5,1)(0,0.5) -- (1,0.5);}}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes,decorations,arrows,calc,arrows.meta} 
+\tikzset{
+	-latex,auto,node distance = 1.5cm and 1.5cm,
+	semithick ,
+	state/.style ={ellipse, draw, minimum width = 0.5 cm},
+    old inner xsep/.estore in=\oldinnerxsep,
+    old inner ysep/.estore in=\oldinnerysep,
+	el/.style = {inner sep=2pt, align=left, sloped},
+	point/.style = {circle, draw=black, inner sep=0.04cm,
+	 fill=black,
+                node contents={}},
+}
+
+
+\usepackage[english]{babel}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+
+% == Other Packages
+\usepackage{rotating}
+\usepackage{latexsym}
+\usepackage{ulem}
+
+
+% == theme & colors
+\usetheme{Warsaw}  % Jens' previous
+\usepackage{helvet}
+\definecolor{someblue}{rgb}{0,.1,0.8}
+
+% == New Commands
+% = For general typesetting
+\newcommand\spacingset[1]{\renewcommand{\baselinestretch}{#1}\small\normalsize}
+\renewcommand\r{\right}
+\renewcommand\l{\left}
+
+\newcommand\makegaps{\addtolength{\itemsep}{.25\baselineskip}}
+\newcommand\makebiggaps{\addtolength{\itemsep}{.5\baselineskip}}
+
+% = For stats & econometrics
+\renewcommand{\epsilon}{\varepsilon}
+\newcommand\ud{\mathrm{d}}
+\newcommand\dist{\buildrel\rm d\over\sim}
+\newcommand\ind{\stackrel{\rm indep.}{\sim}}
+\newcommand\iid{\stackrel{\rm i.i.d.}{\sim}}
+\newcommand\logit{{\rm logit}}
+\newcommand\cA{\mathcal{A}}
+\newcommand\cN{\mathcal{N}}
+\newcommand\E{\mathbb{E}}
+\newcommand\V{\mathbb{V}}
+\newcommand\cJ{\mathcal{J}}
+\newcommand\y{{\bm y}}
+\newcommand\Y{{\bm Y}}
+\newcommand\X{{\bm X}}
+\newcommand\x{{\bm x}}
+\newcommand\eps{{\bm\varepsilon}}
+\newcommand\zero{{\bm 0}}
+\newcommand\be{{\bm\beta}}
+\renewcommand\b{{\bm b}}
+\newcommand\C{{\bm C}}
+\newcommand\D{{\bm D}}
+\newcommand\I{{\bm I}}
+\newcommand\Z{{\bm Z}}
+\newcommand\eeta{{\bm \eta}}
+\DeclareMathOperator*\plim{plim}
+\DeclareMathOperator\rank{rank}
+\newcommand\indep{\protect\mathpalette{\protect\independenT}{\perp}}
+\DeclareMathOperator{\sgn}{sgn}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
+\newcommand{\notindep}{{\bot\negthickspace\negthickspace\bot}{\negthinspace
+  \negmedspace \negthickspace \negthickspace \diagup
+  \;}}
+
+\newcommand{\bs}{\boldsymbol}
+\newcommand{\mb}{\mathbf}
+\newcommand{\real}{\mathbb{R}}
+\renewcommand{\u}{\ensuremath{\mb{u}}}
+\renewcommand{\v}{\ensuremath{\mb{v}}}
+\newcommand{\U}{\ensuremath{\mb{U}}}
+\newcommand{\M}{\ensuremath{\mb{M}}}
+\renewcommand{\b}{\ensuremath{\bs{\beta}}}
+\newcommand{\e}{\ensuremath{\bs{\epsilon}}}
+\newcommand{\bhat}{\ensuremath{\hat{\bs{\beta}}}}
+\newcommand{\XX}{\ensuremath{\X'\X}}
+\newcommand{\XXinv}{\ensuremath{\left(\XX\right)^{-1}}}
+\newcommand{\hatsig}{\ensuremath{\hat{\sigma}^2}}
+\newcommand{\sig}{\ensuremath{\sigma^2}}
+\newcommand{\hatmat}{\ensuremath{\X \XXinv \X'}}
+\newcommand{\ehat}{\ensuremath{\hat{\e}}}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\Sig}{\ensuremath{\bs{\Sigma}}}
+\newcommand{\SigInv}{\ensuremath{\bs{\Sigma^{-1}}}}
+\newcommand{\W}{\ensuremath{\mb{W}}}
+
+\newtheorem{iass}{Identification Assumption}
+\newtheorem{ires}{Identification Result}
+\newtheorem{estm}{Estimand}
+\newtheorem{esti}{Estimator}
+
+\title[]{The Potential Outcome Framework, Part 1}
+\subtitle[ ]{Stat 256, Causality}
+\date{Spring 2026}
+\author[Hazlett]{Chad Hazlett }
+\institute[UCLA]{UCLA\\[1ex]
+  \texttt{chazlett@ucla.edu}
+}
+
+\definecolor{dgreen}{rgb}{0,.6,0.8}
+\newtheorem{assumption}{Assumption}
+\useoutertheme{infolines}
+\begin{document}
+
+\subject{Talks}
+\AtBeginSection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection]
+  \end{frame}
+}
+
+\AtBeginSubsection[]
+{
+  \begin{frame}<beamer>
+    \frametitle{Outline}
+    \tableofcontents[currentsection,currentsubsection]
+  \end{frame}
+}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%\begin{frame}
+%  \frametitle{Purpose, Scope, and Examples}
+%Goal in causal inference is to assess the causal effect some potential cause (e.g. an institution, intervention, policy, or event) on some outcome.\\\bigskip
+%
+%Examples of such research questions include: What is the effect of
+%\begin{itemize}
+% \item political institutions on corruption?
+% \item voting technology on  voting fraud?
+% \item incumbency status on vote shares?
+% \item peace-keeping missions on peace?
+% \item mass media on voter preferences?
+% \item church attendance on turnout?
+%\end{itemize}
+%\end{frame}
+
+% Find somewhere to talk about where the POs are "primitives" or not.
+% Say something about whether these are contradcitory approaches or not.
+
+\begin{frame}{Readings}
+Chapter 1-3 from Hernan \& Robins,  Causal Inference: What If. 
+\end{frame}
+
+\section{Potential Outcomes}
+
+\begin{frame}
+\frametitle{The Neyman-Rubin Potential Outcome Model}
+\small
+\onslide<1-> A considerable part of the empirically oriented causal inference community works mainly in terms of the \textcolor{Blue}{Neyman-Rubin causal model}, aka the \textcolor{Blue}{Potential Outcomes Model} (POM).  \\
+\bigskip
+
+\begin{figure}
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.6\linewidth]{images/Neyman_3.jpeg}
+  \caption{Neyman}
+\end{minipage}%
+\begin{minipage}{.5\textwidth}
+  \centering
+  \includegraphics[width=.5\linewidth]{images/DonRubin.jpg}
+  \caption{Rubin}
+\end{minipage}
+\end{figure}
+\end{frame}
+
+\begin{frame}{The Potential Outcomes Approach in a Nutshell}
+\small
+\onslide<1-> What do we mean when we say something had a causal effect? \\
+\medskip
+\onslide<2-> The POM answer:
+\footnotesize
+\begin{itemize}
+\item<2-> Suppose unit $i$ takes a treatment and you measure the outcome. Let's call this \textcolor{Blue}{$Y_{1i}$}, or  \textcolor{Blue}{the treatment potential outcome}
+\item<3-> You'd like to know how $Y_{1i}$ compares to the value of $Y$ unit $i$ \textit{would have had, if it had not taken the treatment}. Call this \textcolor{Green}{$Y_{0i}$}, or \textcolor{Green}{the non-treatment potential outcome} 
+\item<4-> Then unit $i$'s \textit{treatment effect} is $\tau_i = \textcolor{Blue}{Y_{1i}}-\textcolor{Green}{Y_{0i}}$.
+\item<5-> You do not get to see both \textcolor{Blue}{$Y_{1i}$} and \textcolor{Green}{$Y_{0i}$} for any unit $i$. This is the \textcolor{Red}{fundamental problem of causal inference}.
+\item<6-> Learning anything about causality requires somehow filling in the ``missing'' potential outcomes through some set of assumptions.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Fundamental Quantities (so far)}
+\small
+\begin{itemize}
+\item $Y_{1i}$ and $Y_{0i}$, the potential outcomes  (also written $Y_i(1), Y_i(0), Y_i(d)$).
+\medskip
+\item $D_i$, the treatment status of unit $i$
+\medskip
+\item  Observed outcome, $Y_i=D_i Y_{1i}+(1-D_i)Y_{0i}$
+\medskip
+\item $\tau_i= Y_{1i}-Y_{0i}$
+\end{itemize}
+\medskip
+\onslide<2-> Which of the above are observable? \\
+\medskip
+\onslide<3-> Name games: ``counterfactuals'' vs. ``potential outcomes''
+\end{frame}
+
+\begin{frame}{POs and QOIs}
+\onslide<1->  Some quantities of interest will be:\\
+\small
+\begin{itemize}
+\item<2-> Average treatment effect (ATE): $\E[Y_{1i}-Y_{0i}]=\E[\tau]$
+\medskip
+\item<3-> Average treatment effect among the treated (ATET)
+\medskip
+\[\E[\tau_i|D_i=1]=\E[Y_{1i}-Y_{0i}|D_i=1]\]
+\item<4-> Average treatment effect among the controls (ATEC)
+\medskip
+\[\E[\tau_i|D_i=0]=\E[Y_{1i}-Y_{0i}|D_i=0]\]
+
+\item<5-> Conditional average treatment effect (CATE):
+\medskip
+\[\E[\tau_i|X=x]=\E[Y_{1i}-Y_{0i}|X=x]\]
+
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Embodied assumptions}
+\onslide<1-> Just by writing down POs using notation $Y_i(d)$ we assert:\\
+\footnotesize
+\begin{itemize}
+\item consistency: $Y_i(d)$ is the $Y_i$ you'd see if $i$ received treatment $d$.
+\item no-interference: we've only asked if unit $i$ took the treatment, not unit $j$, so presumably $Y_i(D_i,D_j)= Y_i(D_i)$ regardless of the value of $D_j$. 
+\item one-version-of-treatment:  the $D=d$ means the same thing all the time (though this is sketchy)
+\end{itemize}
+\medskip
+\small
+\onslide<3-> Consistency is really definitional of our POs. But we name it so we can:
+\footnotesize
+\begin{itemize}
+\item reference it later (e.g. to say $\E[Y_{1i}|D_i=1]=\E[Y_i|D_i=1]$, and
+\item remind ourselves it can breakdown, e.g. due to interference.
+\end{itemize}
+\bigskip
+\normalsize
+\onslide<4-> Non-interference + one-version are usually stated as part of Stable Unit Treatment Value assumption (SUTVA, Rubin 1980) \\
+\bigskip
+\onslide<5-> We can relax these in various ways, including:
+\footnotesize
+\begin{itemize}
+\item ``treatment variation irrelevance'' (VanderWeele 2009)
+\item expanding POs to index treatment of others in some limited way
+\item broadening treatment definition
+\end{itemize}
+\end{frame}
+
+\begin{frame}{POs can be seductive}
+\small
+\onslide<1-> Not all POs that can be written are necessarily what you want. \\
+\bigskip
+\onslide<2-> Changing the treatment status of unit $i$ to a counterfactual value could affect other factors that could affect our outcome, or may cause our unit to leave the population. That may be want you want, but 
+\footnotesize
+\begin{itemize}
+\item note that it is not about ``holding all else constant''
+\item it sometimes engages absurdities
+\end{itemize}
+\small
+\onslide<3-> Example: what is the effect of leader gender on some outcome? \\
+\footnotesize
+\begin{itemize}
+\item<4-> For US presidents, this involves $Y_{trump}(female)$, i.e. ``What would Donald Trump have done if he was a woman?'
+\item<5-> That is hard to imagine, depends on when you change his sex and how, affects many other characteristics, affects whether he would have been in sample of presidents, ...
+\item<6-> Raises questions as to what causal effect is of real interest.
+\item<7-> One guide for avoiding this is to assert that a cause must be ``manipulable''
+\item<8-> IMHO: Good guidance, but non-manipulable things can have effects too.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Thinking about POs}
+\small
+\begin{itemize}
+\item<1-> You are used to thinking about the observed $Y_i$. For example, you would not expect a causal effect if you found $Y \indep D$.
+\item<2-> Remember, $Y_i(d)$ is not $Y_i$, it is ``$Y_i$'s value if-treated-with-d''. 
+\item<3-> For example if you randomized $D$, you would see $\{Y_i(1),Y_i(0)\} \indep D_i$.
+\item<4-> Is this confusing? How can you digest this? Some tips:
+\begin{itemize}
+\item<5-> Read out $Y(1)$ as ``the outcome you would get if treated'', etc.
+\smallskip
+\item<6-> $D_i$ just switches whether you see $Y_i(1)$ or $Y_i(0)$, not affecting either
+\smallskip
+\item<7-> Note: $Y_d$ is not \textit{affected} by $D$. Thus, if $Y_d$ and $D$ were correlated, what would that mean about how treatment was assigned?
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+%\begin{frame}{POs as primitives?}
+%\small
+%\onslide<1-> One bad habit is to take these potential outcomes as though they come out of nowhere. \\
+%\bigskip
+%\onslide<2-> This can make claims about how the POs relate to other quantities impossible to scrutinize. 
+%\begin{itemize}
+%\item<3-> e.g. how can you evaluate the assumption $\{ Y(1), Y(0)\}  \indep D | X$?
+%\item<4-> (though you could do it via strong assumptions on $D|X$)
+%\end{itemize}
+%\bigskip
+%\onslide<4-> But we need not be so primitive: yes the POs are RVs we write down, but they come from somewhere. Our SCM/graph already tells us where:
+%\footnotesize
+%\begin{itemize}
+%\item unit potential outcomes:  $Y_{xi} = Y(do(X=x), U=u_i)$ 
+%\item with distribution given by $P(Y_x) = P(Y|do(X=x))$ 
+%\end{itemize}
+%\end{frame}
+
+
+\begin{frame}{Brain Training}
+\textbf{Test 1}: Is $\E[Y_{1i}|D_i=1]=\E[Y_i|D_i=1]$?\\
+
+\bigskip
+\onslide<2-> What licenses this?
+
+\end{frame}
+
+\begin{frame}{Brain Training}
+\onslide<1-> \textbf{Test 2}: Suppose $D_i$ randomly assigned. 
+\small
+\begin{itemize}
+\item<2-> How would the $Y_{1i}$ you observed (i.e. when $D_i=1$) compare to the $Y_{1i}$ you don't observe? And for $Y_{0i}$?
+\bigskip
+\item<3-> What can we say about $\E[Y_{1i}|D_i=1]$ compared to $\E[Y_{1i}|D_i=0]$ and $\E[Y_{1i}]$?
+\bigskip
+\item<4->[] (While we're here: this is ignorability, aka exchangeability!)
+\bigskip
+\item<5-> So can we estimate $\E[Y_{1i}]$? And $\E[Y_{0i}]$?  How? What licenses do you use?
+%\bigskip
+%\item<6-> What does a sample estimator of $\E[Y_i|D_i=1]-\E[Y_i|D_i=0]$ tell us?
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Brain Training}
+%\onslide<1-> \textcolor{Blue}{Recall $D_i$ is a ``switch'' that determines whether you see $Y_{1i}$ or $Y_{0i}$} \\
+%\bigskip 
+\onslide<1-> \textbf{Test 3}: Suppose $Y_{1i}=Y_{0i}$ for all $i$. But now, someone magically sees $Y_{1i}$, and chooses $D_i=1$ more often when $Y_{1i}$ is higher.
+\small
+\begin{itemize}
+\item<2-> How would the $Y_{1i}$ you see compare to $Y_{1i}$ you don't see? 
+\smallskip
+\item<3-> So does $\E[Y_{1i}|D_i=1]=\E[Y_{1i}|D_i=0]=\E[Y_{1i}]$? 
+\smallskip
+\item<4-> How would the $Y_{0i}$ you see compare to the ones you don't?
+\item<5-> If you estimate $\E[Y_i|D_i=1]-\E[Y_i|D_i=0]$, do you expect something near zero, positive, or negative? 
+\item<6-> Does this tell us anything about $\E[Y_{1i}-Y_{0i}]$?
+\item<7-> Can you say anything about expected direction of bias?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Brain Training}
+\onslide<1-> \textbf{Test 4}: Suppose you don't know anything about how $D_i$ is assigned w.r.t. $Y_{1i}$ and $Y_{0i}$. 
+\bigskip
+\begin{itemize}
+\item<2-> Can we say anything about how $\E[Y_i|D_i=1]-\E[Y_i|D_i=0]$ compares to $\E[Y_{1i}]-\E[Y_{0i}]$?
+\bigskip
+\item<3-> Unfortunately, this is often the scenario we are in with observational data. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Brain Training: Visual Practice}
+Hernan \& Robins figure 1.1:
+\begin{center}
+\includegraphics[scale=.5]{images/hernanrobinsfig.png}
+\end{center} 
+\end{frame}
+
+
+\begin{frame}{Brain Training: Visual Practice}
+\small
+\onslide<1-> Let's looks at $Y_{1i}$ and $Y_{0i}$ alone first. \\
+\vspace{-.4in}
+\begin{center}
+  \includegraphics[scale=.7]{y0y1plot_blank.pdf} 
+\end{center}
+\vspace{-.2in} 
+\onslide<1-> True $\E[Y_{1i}-Y_{0i}]=ATE=3$\\
+%\medskip
+%\onslide<1-> %$\overline{Y}_{1i}-\overline{Y}_{0i}=\hat{ATE}=3.01$\\
+\end{frame}
+
+\begin{frame}{Random Assignment of Treatment}
+\small
+\onslide<1-> Now suppose $D_i=1$ is randomly assigned. We see only the filled dots:\\
+\vspace{-.4in}
+\begin{center}
+  \includegraphics[scale=0.7]{y0y1plot_nobias.pdf}\\
+\end{center}
+\vspace{-.2in}
+\onslide<2-> We get \[\hat{\E}[Y_i|D_i=1]-\hat{\E}[Y_i|D_i=0]=\widehat{ATE}=3.01\]
+\end{frame}
+
+\begin{frame}{Non-Random Assignment of Treatment 1}
+\small
+\onslide<1-> Suppose $Pr(D_i=1)$ increases to the right. Now we observe (filled dots):\\
+\vspace{-.4in}
+\begin{center}
+  \includegraphics[scale=0.7]{y0y1plot_posbias.pdf}\\
+\end{center}
+\vspace{-.2in}
+\onslide<2-> What difference in means do you expect?\\
+\vspace{-.1in}
+\onslide<3-> \[\hat{\E}[Y_i|D_i=1]-\hat{\E}[Y_i|D_i=0]=\widehat{ATE}=9.97\]
+\end{frame}
+
+\begin{frame}{Non-Random Assignment of Treatment 2}
+\small
+\onslide<1-> Now suppose $Pr(D_i=1)$ decreases to the right. We observe (filled dots):\\
+\vspace{-.5in}
+\begin{center}
+  \includegraphics[scale=0.7]{y0y1plot_negbias.pdf}\\
+\end{center}
+\vspace{-.3in}
+\onslide<2-> What difference in means do you expect now?
+\vspace{-.05in} \onslide<3-> \[\hat{\E}[Y_i|D_i=1]-\hat{\E}[Y_i|D_i=0]=\widehat{ATE}=-1.59\] \\
+%\onslide<4-> Preview: Can't do anything about this yet, but if we observed ``$X$'',  some hope.
+\end{frame}
+
+%\begin{frame}{Preview of Things to Come}
+%\footnotesize
+%\onslide<1-> Again, say $Pr(D_i=1)$ decreases to the right\\
+%\smallskip
+%\onslide<2-> But now suppose $X$ is an observable, and $D$ is random conditional on $X$\\
+%\vspace{-.5in}
+%\begin{center}
+%  \includegraphics[scale=0.6]{y0y1plot_negbias_X.pdf}\\
+%\end{center}
+%%\vspace{-.2in}
+%%\[[\overline{Y}_i|D=1]-[\overline{Y}_{i}|D=0]=\widehat{ATE}=2.63\]
+%\end{frame}
+%
+%\begin{frame}{Preview of Things to Come}
+%\footnotesize
+%\onslide<1-> Again, say $Pr(D_i=1)$ decreases to the right\\
+%\smallskip
+%\onslide<1-> But now suppose $X$ is an observable, and $D$ is random conditional on $X$\\
+%\vspace{-.4in}
+%\begin{center}
+%  \includegraphics[scale=0.6]{y0y1plot_matched.pdf}\\
+%\end{center}
+%\vspace{-.2in}
+%\onslide<1-> Having observed $X$ what if we compare treated to control only at starred points?  \\
+%\onslide<2->
+%\[[\overline{Y}_i|D=1]-[\overline{Y}_{i}|D=0]=\widehat{ATE}=2.63\]
+%\end{frame}
+
+%\begin{frame}{Notation and Definitions}
+%\small \onslide<1-> Unit-level effects ($\tau_i$) are fundamentally unidentifiable.  On occasion we will be able to identify various average effects. Some estimands include: \\
+%\footnotesize
+%\begin{itemize}
+%\item Treatment effect, $\tau_i = Y_{1i}-Y_{0i}$
+%\item Average Treatment Effect (ATE):  
+%\[ATE = \E[Y_{1i}-Y_{0i}] = \E[\tau_i] = \int \tau p(\tau) d\tau \]
+%\item Average treatment effect on the treated (ATT):
+%\[ATT = \E[Y_{1i}-Y_{0i}|D_i=1] = \int \tau p(\tau|D=1) d\tau\]
+%\item Average treatment effect on the controls (ATC):
+%\[ATC = \E[Y_{1i}-Y_{0i}|D_i=0] = \int \tau p(\tau|D=0) d\tau\]
+%\item Average treatment effect for sub-groups ($ATE(X)$):
+%\[ATE(X) = \E[Y_{1i}-Y_{0i}|X=x] = \int \tau p(\tau|X=x) d\tau \]
+%\end{itemize}
+%\end{frame}
+%
+%\begin{frame}{Practice}
+%\small Looking at this plot, describe the meaning of the $ATE$, $ATT$, $ATC$, \& $ATE(X)$ graphically
+%\begin{center}
+% % \includegraphics[scale=.7]{y0y1plot_blank.pdf} 
+%  \includegraphics[scale=0.6]{y0y1plot_negbias_X.pdf}\\
+%\end{center}
+%\end{frame}
+%
+%\begin{frame}[fragile]
+%\frametitle{A Common Assumption: SUTVA}
+%\small
+%\onslide<1-> The use of notation $\{Y_{1i},Y_{0i}\}$  implicitly means we only care about treatment status of $i$ and not of other units, $j$ \\
+%\footnotesize
+%\begin{itemize}
+%%\item We also defined ``observed'' wrt only to unit $i$'s treatment: $Y_i=Y_{1i} D_i +Y_{0i}(1-D_i)$ 
+%\item And we defined the causal effect $\tau_i$ as $Y_{1i}-Y_{0i}$
+%\end{itemize}
+%\small
+%\medskip
+%\onslide<2-> Known as Stable Unit Treatment Value Assumption (SUTVA), ``no interference'', or ``individualized treatment response''. \\ 
+%\medskip
+%\onslide<3-> It is easy to break: disease, vaccination, conflict, education, anti-corruption monitoring, ... \\
+%\medskip
+%\onslide<4-> Without this you get a proliferation of potential outcomes. E.g. with four units you could define:\\
+%\[\{Y_i(0,0,0,0), Y_i(0,0,0,1),..., Y_i(1,1,1,1)\}\]
+%\vspace{-.2in}
+%\begin{itemize}
+%\item<5-> how many potential outcomes for each unit, $i$? \\
+%\item<6-> and how many causal effects for $i$?
+%\end{itemize}
+%\end{frame}
+%
+%\begin{frame}{Potential Outcomes with Interference}
+%\small
+%\begin{definition}[SUTVA]
+%Unit $i$'s potential outcomes depend on $D_i$ and not on $D_{j \neq i}$
+%\end{definition}
+%\begin{itemize}
+%\item<2-> e.g. $Y_3(0,0,D_3,0)$ is same as $Y_3(0,1,D_3,1)$, $Y_3(1,1,D_3,0)$,... 
+%\item<3-> So just write $Y_3(D_3)$
+%\item<4-> Also limits the causal effects for each unit: simply $\tau_i=Y_i(1)-Y_i(0)=Y_{1i}-Y_{0i}$
+%\end{itemize}
+%\bigskip
+%\onslide<5-> This is an example of an \textbf{exclusion restriction}: we use outside information to rule out possibility of certain
+%causal effects.
+%\begin{itemize}
+%\item<6-> the effect of you taking the treatment on my POs is excluded (0)
+%\item<6-> traditional models (e.g. regression) do same: $Y_i$ depends on $X_i$ not $X_j$.
+%\end{itemize}
+%\onslide<7-> Causal inference in the presence of interference is an
+%area of active research. e.g. sometimes ``spillover'' or ``saturation'' is deliberately varied 
+%\end{frame}
+
+\begin{frame}{Yet More Brain Training: ``science'' tables}
+Imagine a study population with 4 units:
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{c  c c c c }
+      $i$ & $D_i$ & $Y_{1i}$ & $Y_{0i}$ & $\tau_i$ \\ \hline
+      1  & 1 & 10  & 4 & 6 \\
+      2  & 1 & 1  & 2 & -1 \\
+      3 & 0 & 3 & 3 & 0 \\
+      4 & 0 & 5 & 2 & 3 \\
+    \end{tabular}
+    \end{table}
+
+\onslide<2-> 1. What is the ATE?
+\onslide<3-> \small $\E[Y_{1i} - Y_{0i}] = 1/4 \times (6-1+0+3)=2$ \\
+\medskip
+\footnotesize(Note: average effect is positive, but not all $\tau_i$ are)\\
+\small
+\medskip
+\onslide<4-> 2. What are the ATT and ATC? \\
+\begin{itemize}
+\item<5->[] $\E[Y_{1i}-Y_{0i}|D_i=1]=.5(6-1)=2.5$\\
+\item<6->[] $\E[Y_{1i}-Y_{0i}|D_i=0] =.5(0+3)=1.5$
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Difference in Means}
+\small
+\onslide<1-> You saw earlier how simple comparison of observed outcomes can be misleading. Let's use POM to see this more rigorously. \\
+\bigskip
+\onslide<2-> The \textcolor{Blue}{Difference in Means} estimand:
+ $$\E[Y_i|D_i=1]-\E[Y_i|D_i=0]$$ \\
+\bigskip
+\onslide<3-> What does the POM tell us about this quantity? One decomposition:
+
+\footnotesize
+\begin{align*}
+\E[Y_i|D_i=1]-\E[Y_i|D_i=0] &= \E[Y_{1i}|D_i=1]-\E[Y_{0i}|D_i=0] \\
+%&= \textcolor{Blue}{\E[Y_{1i}|D_i=1]-\E[Y_{0i}|D_i=1]} + \textcolor{Green}{\left(\E[Y_{i0}|D_i=1]-\E[Y_{0i}|D_i=0] \right)} \\
+&= \textcolor{Blue}{\E[Y_{1i}-Y_{0i}|D_i=1]} + \textcolor{Green}{\left(\E[Y_{0i}|D_i=1]-\E[Y_{0i}|D_i=0] \right)}
+\end{align*}
+\small
+\onslide<4-> What are the terms in \textcolor{Blue}{blue} \& \textcolor{Green}{green}?
+
+%\begin{scriptsize}
+%\begin{align}
+%\begin{split}
+%E[Y_i|D=1]-E[Y_i|D_i=0] \\
+%&=E[Y_{1i} | D_i=1]-E[Y_{0i} | D_i=0]\\
+%                 &=\underbrace{E[Y_{1i} - Y_{0i} | D_i=1]}_{\mbox{ATT}}
+%                 +\underbrace{\{ E[Y_{i0} | D_i=1]- E[Y_{0i} | D_i=0]\}}_{\mbox{BIAS}}\nonumber
+%\end{split}
+%\end{align}
+%\end{scriptsize}
+%
+%\begin{itemize}
+%\itemsep1pt\parskip0pt\parsep0pt
+%\item
+%  Bias term unlikely to be 0 in most applications.
+%\item
+%  Selection into treatment is often associated with the potential
+%  outcomes
+%\end{itemize}
+\end{frame}
+
+%\begin{frame}{Selection Bias}
+%\footnotesize
+%\begin{align*}
+%\E[Y_i|D_i=1]-\E[Y_i|D_i=0] &= \E[Y_{1i}|D_i=1]-\E[Y_{0i}|D_i=0] \\
+%&= \textcolor{Blue}{\E[Y_{1i}-Y_{0i}|D_i=1]} + \textcolor{Green}{\left(\E[Y_{0i}|D_i=1]-\E[Y_{0i}|D_i=0] \right)}
+%\end{align*}  \\
+%\medskip
+%\onslide<1-> Can you think of an example and what these two values might look like? \\
+%\medskip
+%%\onslide<2-> Example: $D=\text{Church Attendance}$, $Y=\text{Political Participation}$ \\
+%%\begin{itemize}
+%%\item Church goers likely to differ from non-Church goers on a range of background characteristics (e.g.~civic duty)
+%%\medskip
+%%\item Turnout for churchgoers could be higher than for non-churchgoers even if churchgoers never attended church, or church had zero mobilizing effect
+%%  ($\E[Y_{0i}|D_i=1]-\E[Y_{0i}|D_i=0]>0$)
+%%\end{itemize}
+%%\bigskip
+%\onslide<2-> Example: Human rights treaties
+%\begin{itemize}
+%\item Countries willing to sign a human rights treaty will often be those with better human rights already. 
+%\medskip
+%\item Human rights better in signatory countries even if they had not signed ($\E[Y_{0i}|D_i=1]-\E[Y_{0i}|D_i=0]>0$)
+%\end{itemize}
+%\end{frame}
+
+\begin{frame}{The Assignment Mechanism}
+\small
+\onslide<1-> To fill in the missing potential outcomes using observed ones, assumptions about the \textit{assignment mechanism} come into play.  \\
+\bigskip
+\onslide<2-> For example, the bias we just saw implies we can get $ATT$ when $Y_{0i} \perp D_i$ 
+\begin{itemize}
+\footnotesize
+\item (This is a special case of the broader assumption, $\{Y_0, Y_1 \} \indep D_i$, we will discuss with experiments)
+\item Point is: if we have reason to believe $D_i \indep \{Y_0, Y_1 \}$, we know we can substitute group means for everybody's mean on the corresponding potential outcome.
+\item This counts as an  ``identification strategy'' or ``identifying assumption'' since it allows us to link an observable thing with a counterfactual thing.
+\end{itemize}
+%\small
+%\bigskip
+%\onslide<3-> Assumptions about $D_i$'s assignment relative to the POs give us identification opportunities:
+%\footnotesize
+%\begin{enumerate}
+%\item For now: if we know $D_i$ is random (aka ignorability, exchangeability) unobserved POs would look just like the observed ones in the corresponding treatment groups.
+%\item If we think $D_i$ is random or at least unrelated to POs conditionally on $X$, we'll be able to use that.
+%\item If we don't know anything, we are in trouble.
+%\end{enumerate}
+%\small
+%\bigskip
+%\onslide<4-> Those represent important categories:  random assignment, selection on observables, and selection on unobservables. \\
+\end{frame}
+
+
+\begin{frame}{Summing Up: \\The Neyman-Rubin / Potential Outcome Model}
+\small
+\begin{itemize}
+\item<1-> Defines causality through counterfactual comparisons
+\medskip
+\item<2-> In so doing, forces us to think about potential outcomes rather than just the observed outcome.
+\medskip
+\item<3-> Consistency, no spillovers/interference, one-version-of-treatment implied by notation. 
+\medskip
+\item<4-> Some dangers: 
+\scriptsize
+\begin{itemize}
+\item violating consistency/ spillover, multiple versions of treatment
+\item POs you wouldn't actually care about when thinking of a treatment.
+\end{itemize}
+\small
+\medskip
+\item<4-> There is no progress without estimating missing potential outcomes.
+\medskip
+\item<5-> Whether and how we estimate missing potential outcomes will have to do with what assumptions we can make about the assignment mechanism.
+\end{itemize}
+%\medskip
+%\item<6-> Does not assume homogenous effects (though we will often average it away, or into sub-groups at least)
+\end{frame}
+
+\end{document}

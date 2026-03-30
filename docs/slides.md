@@ -5,9 +5,10 @@ title: Slides
 
 # Slides
 
-| Topic | Slides |
-|-------|--------|
-| Introduction | [PDF](pdf/slides/Intro.pdf) |
+| Topic | Slides | Handout |
+|-------|--------|---------|
+| Introduction | [PDF](pdf/slides/Intro.pdf) | |
+| Potential Outcomes, Part 1 | [PDF](pdf/slides/pom1.pdf) | [PDF](pdf/slides/pom1_handout.pdf) |
 
 <!-- Uncomment as the quarter progresses:
 | DAGs & SCMs | [PDF](pdf/slides/DAGandSCM.pdf) |
