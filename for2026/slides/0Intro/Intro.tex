@@ -1,0 +1,383 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+\usetheme[height=7mm]{Rochester}
+\setbeamertemplate{items}[ball]
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{epsfig}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage{inconsolata}
+\usepackage{fancyvrb}
+\usepackage{bbm}
+
+% == theme & colors
+\usetheme{Warsaw}
+\definecolor{someblue}{rgb}{0,.1,0.8}
+
+\title{Stat 256: Causality}
+\date{Spring 2026}
+\subtitle[ ]{Introduction}
+\author{\textbf{Instructor}: Chad Hazlett}
+\institute[UCLA]{UCLA\\[1ex]}
+
+\definecolor{dgreen}{rgb}{0,.6,0.8}
+\newtheorem{assumption}{Assumption}
+\newtheorem{iass}{Identification Assumption}
+\newtheorem{ires}{Identification Result}
+\newtheorem{estm}{Estimand}
+\newtheorem{esti}{Estimator}
+\newtheorem{question}{Question}
+\newtheorem{answer}{Answer}
+\newtheorem{proposition}{Proposition}
+\newcommand{\bs}{\boldsymbol}
+\newcommand{\mb}{\mathbf}
+\newcommand{\real}{\mathbb{R}}
+\renewcommand{\u}{\ensuremath{\mb{u}}}
+\renewcommand{\v}{\ensuremath{\mb{v}}}
+\newcommand{\U}{\ensuremath{\mb{U}}}
+\newcommand{\Z}{\ensuremath{\mb{Z}}}
+\newcommand{\PP}{\ensuremath{\mb{P}}}
+\newcommand{\M}{\ensuremath{\mb{M}}}
+\newcommand{\X}{\ensuremath{\mb{X}}}
+\newcommand{\x}{\ensuremath{\mb{x}}}
+\newcommand{\Y}{\ensuremath{\mb{Y}}}
+\newcommand{\D}{\ensuremath{\mb{D}}}
+\newcommand{\y}{\ensuremath{\mb{y}}}
+\renewcommand{\b}{\ensuremath{\bs{\beta}}}
+\newcommand{\e}{\ensuremath{\bs{\epsilon}}}
+\newcommand{\bhat}{\ensuremath{\hat{\bs{\beta}}}}
+\newcommand{\XX}{\ensuremath{\X'\X}}
+\newcommand{\XXinv}{\ensuremath{\left(\XX\right)^{-1}}}
+\newcommand{\hatsig}{\ensuremath{\hat{\sigma}^2}}
+\newcommand{\sig}{\ensuremath{\sigma^2}}
+\newcommand{\hatmat}{\ensuremath{\X \XXinv \X'}}
+\newcommand{\ehat}{\ensuremath{\hat{\e}}}
+\newcommand{\tr}{\text{tr}}
+\newcommand{\Sig}{\ensuremath{\bs{\Sigma}}}
+\newcommand{\SigInv}{\ensuremath{\bs{\Sigma^{-1}}}}
+\newcommand{\W}{\ensuremath{\mb{W}}}
+\newcommand\E{\mathbb{E}}
+
+\newcommand{\indep}{{\bot\negthickspace\negthickspace\bot}}
+\useoutertheme{infolines}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%% ============================================================
+%% WHY CAUSALITY
+%% ============================================================
+
+\begin{frame}{Why causality?}
+\onslide<1-> \textit{Most} interesting questions in science and life are causal. \\
+\footnotesize
+\begin{itemize}
+\item Does this drug / policy / event cause higher or lower $Y$?
+\item What explains why $Y$ happened?
+\end{itemize}
+\bigskip
+\normalsize
+\onslide<2-> And yet:\\
+\footnotesize
+\begin{itemize}
+\item<3-> There is no causal inference without assumptions that are fundamentally unverifiable from data alone. \medskip
+\item<4-> Traditional statistics does not include a coherent language for causal effects, much less tools. \medskip
+\item<5-> Even ``descriptive'' analyses involve missingness, case selection, and generalization---problems rooted in causal processes. \medskip
+\item<6-> Knowing what you can and cannot say, and protecting against abuse of your results, is vital to being an honest statistician.
+\end{itemize}
+\end{frame}
+
+%% ============================================================
+%% GOALS
+%% ============================================================
+
+\begin{frame}{Goals}
+\begin{itemize}
+\item<1-> Equip you with tools for careful causal thinking \medskip
+\item<2-> Equip you to read, critique, and (prepare to) write methodological work on causal inference \medskip
+\item<3-> Provide you with tools for applied research and the wisdom to
+\begin{itemize}
+\item avoid abusing these tools
+\item carefully assess the credibility of claims made by others
+\end{itemize}
+\medskip
+\item<4-> What we focus \textit{less} on:
+\begin{itemize}
+\item some of the more esoteric theoretical directions
+\item estimation horse-races while deeper problems go ignored
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+%% ============================================================
+%% THEMES
+%% ============================================================
+
+\begin{frame}{Theme 1: Bilingualism}
+\onslide<2-> Two frameworks dominate work on causal inference:\\
+\medskip
+\onslide<3-> 1. \textbf{Structural causal models (SCMs) / directed acyclic graphs (DAGs)}
+\small
+\begin{itemize}
+\item Encode which variables cause which; derive what you can learn from observational data.
+\item Largely attributed to UCLA's own Judea Pearl.
+\end{itemize}
+\bigskip
+\normalsize
+\onslide<4-> 2. \textbf{Potential outcomes (POs)}
+\small
+\begin{itemize}
+\item Each unit has potential outcomes under each treatment; write these down and make assumptions about how they relate to treatment assignment.
+\item Associated with Jerzy Neyman and Don Rubin.
+\end{itemize}
+
+\normalsize
+\begin{center}\onslide<5-> These have sometimes been treated as rival camps, but that need not be the case. \textit{We will develop fluency in both.}
+\end{center}
+\end{frame}
+
+\begin{frame}{Theme 2: Feasibility}
+\small
+\begin{itemize}
+\item<1-> Great theoretical progress has been made in causal inference.
+\medskip
+\item<2-> But in theory you can assert an assumption whether it is credible or not.
+\medskip
+\item<3-> We care about how investigators can \textit{make or defend} causal claims in practice.
+\medskip
+\item<4-> ``Identification strategies'' link causal quantities to observable ones. For each, we ask:
+\footnotesize
+\begin{itemize}
+\item What do the assumptions mean? What about nature or the research design supports them? How could you falsify them? \\
+\item How do we avoid over-confidence built on unreliable assumptions? \\
+\item How do we make progress when sharp assumptions aren't defensible?
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+%% ============================================================
+%% ROAD MAP
+%% ============================================================
+
+\begin{frame}{Road map: Part I --- Core language and theory}
+\textbf{Unit 1: DAGs and structural causal models}\\
+\small
+\begin{itemize}
+	\item Graphs, d-separation, back-door and front-door criteria, do-calculus
+	\item Where do potential outcomes come from?
+\end{itemize}
+\medskip
+
+\normalsize
+\textbf{Unit 2: Potential outcomes}\\
+\small
+\begin{itemize}
+\item Definitions, estimands, randomized experiments
+\item Conditional ignorability / selection on observables
+\item Bridging POs and DAGs
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Road map: Part II --- Identification strategies}
+\small
+\textbf{Unit 3: Selection on observables in practice}\\
+\footnotesize
+\begin{itemize}
+\item Sub-classification, matching, regression, propensity scores, balancing weights
+\item Brief survey of double-robust / ML-augmented approaches
+\item Sensitivity analysis for SOO
+\end{itemize}
+\medskip
+\small
+\textbf{Unit 4: Instrumental variables}\\
+\footnotesize
+\begin{itemize}
+\item IV in PO and DAG frameworks
+\item Practical applications and critiques, sensitivity analysis
+\end{itemize}
+\medskip
+\small
+\textbf{Unit 5: Regression discontinuity}\\
+\footnotesize
+\begin{itemize}
+\item Sharp and fuzzy RD
+\end{itemize}
+\medskip
+\small
+\textbf{Unit 6: Difference-in-differences}\\
+\footnotesize
+\begin{itemize}
+\item Parallel trends; DID $\neq$ TWFE; staggered adoption; sensitivity
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Road map: Part II (continued)}
+\small
+\textbf{Unit 7: Time-varying confounding / panel methods}\\
+\footnotesize
+\begin{itemize}
+\item Synthetic control, LDV, interactive fixed effects, relaxing parallel trends
+\end{itemize}
+\medskip
+\small
+\textbf{Unit 8: Sensitivity analysis and partial identification}\\
+\footnotesize
+\begin{itemize}
+\item OVB for bounding; sensitivity for IV and other strategies
+\item Placebo treatments and outcomes; stability-controlled quasi-experiments
+\end{itemize}
+\medskip
+\small
+\textbf{Unit 9: Mediation and TRACE}\\
+\footnotesize
+\begin{itemize}
+\item Why mediation is fundamentally harder; direct and indirect effects
+\item Marginal structural models; separating units rather than paths
+\item The TRACE: separating units rather than effects to address post-treatment problems
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Road map: Part III --- You teach!}
+\small
+\begin{itemize}
+\item Groups of 2--3 choose an advanced topic
+\item 25-minute lecture + 5 min Q\&A
+\item Submit a tutorial with worked examples and problems
+\end{itemize}
+
+\onslide<2-> Example topics:\\
+\footnotesize
+\begin{itemize}
+\item Causal inference in networks / interference
+\item Causal attribution, necessity, sufficiency (causes of effects)
+\item Generalization, transportability, external validity
+\item Advanced heterogeneous effect estimation (CATE, causal forests)
+\item Negative outcome controls, placebos, falsification
+\item Other ID strategies not covered in class
+\item \textit{Custom topics} (by permission)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{More on presentations}
+\small
+\onslide<1-> Why do this?\\
+\footnotesize
+\begin{itemize}
+\item Mimics the experience of a smaller advanced seminar
+\item Learning something well enough to present it produces far better understanding
+\item You are well situated to explain new material to your peers
+\end{itemize}
+\small
+\medskip
+\onslide<2-> Common pitfalls: \\
+\footnotesize
+\begin{itemize}
+\item Not enough attention to what the identification assumptions really are, how to understand them, what it would take to believe them.
+\item Splitting up the topic so that nobody understands the big picture.
+\end{itemize}
+\end{frame}
+
+%% ============================================================
+%% LOGISTICS
+%% ============================================================
+
+\begin{frame}{Requirements and grading}
+\small
+\begin{itemize}
+\item<1-> \textbf{Problem sets (25\%)}: Expect 4--5 over the quarter. Posted and submitted online. Ask for extensions \textit{before} the deadline.
+\medskip
+\item<2-> \textbf{Advanced topic presentation (25\%)}: Groups of 2--3; lecture + tutorial.
+\medskip
+\item<3-> \textbf{Critical review memo (25\%)}: Individual. Either critique an empirical paper's identification strategy, or take a deep dive into a methods paper (simulations, failure modes, extensions). Due Week 10.
+\medskip
+\item<4-> \textbf{Active-learning activities (25\%)}: Near-daily in-class exercises to rehearse and reinforce the material. Graded lightly (0/1/2/3). Lowest two dropped. No make-ups.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Timeline (preliminary)}
+\begin{itemize}
+\item \textbf{Week 3}: Sign up for presentation groups and topics.
+\medskip
+\item \textbf{Week 6}: Check-in meeting with instructor on presentation and memo.
+\medskip
+\item \textbf{Weeks 9--10}: Student-led lectures.
+\medskip
+\item \textbf{Week 10}: Critical review memo due.
+\medskip
+\item \textbf{Finals week}: All presentation materials due.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Prerequisites}
+We want to accommodate various fields and training backgrounds, but the skills we count on are:
+\medskip
+\small
+\begin{itemize}
+\item Essential: probability theory, statistics including inference and regression.
+\item Useful: linear algebra, multivariate calculus.
+\item Essential: enough \texttt{R} for AI to help you, and a way to write in \TeX{} (e.g.\ Rmarkdown).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Books}
+\small
+\onslide<1-> We will share references and reading expectations as needed.  \\
+\bigskip
+\onslide<2-> For Unit 1 on DAGs (starting Week 1) you should have:
+\begin{itemize}
+\item Pearl, J., Glymour, M., \& Jewell, N. P. (2016). \textit{Causal Inference in Statistics: A Primer}. Wiley.
+\item Hern\'an, M.A.\ \& Robins, J.M.\ (2024). \textit{Causal Inference: What If}. Chapman \& Hall/CRC. (Free online)
+\end{itemize}
+\bigskip
+\onslide<3-> Other useful references:
+\begin{itemize}
+\item Pearl, J. (2009). \textit{Causality}. Cambridge University Press. 2nd ed.
+\item Cunningham, S. (2021). \textit{Causal Inference: The Mixtape}. (Free online)
+\item Huntington-Klein, N. (2022). \textit{The Effect}. (Free online)
+\end{itemize}
+\end{frame}
+
+\begin{frame}{AI tools}
+\small
+You are welcome to use AI tools (ChatGPT, Claude, Copilot, etc.) as learning aids.\\
+\medskip
+\begin{itemize}
+\item Problem set write-ups must reflect \textit{your own} understanding.
+\item Your critical review memo must be your own analytical work---but discussing ideas with AI to develop your thinking is fine and encouraged.
+\item If you use AI substantively, briefly note how.
+\end{itemize}
+\medskip
+The goal is to learn the material. AI can help with that if you use it as leverage rather than a way out.
+\end{frame}
+
+\begin{frame}{Other logistics}
+\small
+\begin{itemize}
+\item Lectures: Monday, Wednesday, 11:00--12:15, Haines A44. In-person only. \medskip
+\item Slides will be posted on the course website.\medskip
+\item My office hours: Wednesday 3:30--4:45, Bunche 3264  \medskip
+\end{itemize}
+\end{frame}
+
+\begin{frame}{}
+\begin{center}
+\Large Questions?
+\end{center}
+\end{frame}
+
+\begin{frame}{Introductions}
+\begin{itemize}
+\item Your name
+\item Your department / program / year
+\item What brings you to this course?
+\item One causal question you find interesting (any domain)
+\end{itemize}
+\end{frame}
+
+\end{document}
