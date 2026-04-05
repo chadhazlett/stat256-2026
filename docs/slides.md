@@ -5,17 +5,17 @@ title: Slides
 
 # Slides
 
-| Topic | Slides | Handout |
-|-------|--------|---------|
+| Topic | Slides | In-class practice |
+|-------|--------|--------------------|
 | Introduction | [PDF](pdf/slides/Intro.pdf) | |
-| DAGs & SCMs, Part 1 | [PDF](pdf/slides/DAGandSCM_part1.pdf) | [PDF](pdf/slides/DAGandSCM_part1_handout.pdf) |
+| DAGs & SCMs, Part 1 | [PDF](pdf/slides/DAGandSCM_part1_handout.pdf) | [PDF](pdf/activities/activity01_dags_part1.pdf) |
 
 <!-- Uncomment as the quarter progresses:
-| DAGs & SCMs | [PDF](pdf/slides/DAGandSCM.pdf) |
-| Potential Outcomes | [PDF](pdf/slides/POM.pdf) |
-| Selection on Observables | [PDF](pdf/slides/CI.pdf) |
-| Instrumental Variables | [PDF](pdf/slides/IV.pdf) |
-| Regression Discontinuity | [PDF](pdf/slides/RDD.pdf) |
-| Difference-in-Differences | [PDF](pdf/slides/DID.pdf) |
-| Sensitivity Analysis | [PDF](pdf/slides/Sensitivity.pdf) |
+| DAGs & SCMs, Part 2 | [PDF](pdf/slides/DAGandSCM_part2_handout.pdf) | [PDF](pdf/activities/activity02_dags_part2.pdf) |
+| Potential Outcomes | [PDF](pdf/slides/pom1_handout.pdf) | |
+| Selection on Observables | [PDF](pdf/slides/CI.pdf) | |
+| Instrumental Variables | [PDF](pdf/slides/IV.pdf) | |
+| Regression Discontinuity | [PDF](pdf/slides/RDD.pdf) | |
+| Difference-in-Differences | [PDF](pdf/slides/DID.pdf) | |
+| Sensitivity Analysis | [PDF](pdf/slides/Sensitivity.pdf) | |
 -->
