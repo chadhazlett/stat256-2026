@@ -1,0 +1,82 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+
+\newcommand{\indep}{{\bot\negthickspace\negthickspace\bot}}
+\DeclareMathOperator{\E}{\mathbb{E}}
+
+\pagestyle{plain}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Statistics 256: Causality}} \\[6pt]
+{\large In-class Activity 3: Potential Outcomes}
+\end{center}
+
+\vspace{4pt}
+\noindent\textbf{Name(s):} \hrulefill
+
+\vspace{16pt}
+
+%%% QUESTION 1 %%%
+\noindent\textbf{Question 1: A science table}
+
+\medskip
+\noindent A study population has four units. The full ``science table'' (normally unobservable) is:
+
+\begin{center}
+\begin{tabular}{c c c c c}
+  $i$ & $D_i$ & $Y_i(1)$ & $Y_i(0)$ & $\tau_i$ \\ \hline
+  1 & 1 & 8 & 3 & \\
+  2 & 1 & 4 & 5 & \\
+  3 & 0 & 6 & 2 & \\
+  4 & 0 & 3 & 3 & \\
+\end{tabular}
+\end{center}
+
+\begin{enumerate}[label=(\alph*)]
+\item Fill in $\tau_i$. Is the treatment effect the same for every unit?
+
+\vspace{1.2cm}
+
+\item Compute the ATE, the ATT, and the ATC.
+
+\vspace{2.5cm}
+
+\item Which cells of this table would you \emph{actually} get to observe in a real study? Cross out the ones you would not.
+
+\vspace{1cm}
+
+\item Compute the naive difference in means, $\E[Y_i \mid D_i=1] - \E[Y_i \mid D_i=0]$, using only the observed cells. Compare it to the ATT. Are they the same?
+
+\vspace{2.5cm}
+\end{enumerate}
+
+\clearpage
+
+%%% QUESTION 2 %%%
+\noindent\textbf{Question 2: Decomposing the difference in means}
+
+\medskip
+\noindent Show (a few lines of algebra, using consistency) that
+\[
+\E[Y_i \mid D_i=1] - \E[Y_i \mid D_i=0]
+\;=\;
+\underbrace{\E[Y_i(1)-Y_i(0) \mid D_i=1]}_{\text{ATT}}
+\;+\;
+\underbrace{\E[Y_i(0) \mid D_i=1] - \E[Y_i(0) \mid D_i=0]}_{\text{baseline bias}}.
+\]
+
+\vspace{4.5cm}
+
+\noindent Verify the decomposition numerically on the science table from Question 1.
+
+\vspace{3cm}
+
+\noindent In plain English, what does the ``baseline bias'' term represent? Under what assumption about $D$ does it vanish?
+
+\vspace{2.5cm}
+
+\end{document}
