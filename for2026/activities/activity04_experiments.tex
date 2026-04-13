@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{booktabs}
+
+\newcommand{\indep}{{\bot\negthickspace\negthickspace\bot}}
+\DeclareMathOperator{\E}{\mathbb{E}}
+\DeclareMathOperator{\Var}{\mathrm{Var}}
+\DeclareMathOperator{\Cov}{\mathrm{Cov}}
+
+\pagestyle{plain}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Statistics 256: Causality}} \\[6pt]
+{\large In-class Activity 4: Experiments}
+\end{center}
+
+\vspace{4pt}
+\noindent\textbf{Name(s):} \hrulefill
+
+\vspace{16pt}
+
+%%% QUESTION 1 %%%
+\noindent\textbf{Question 1: The identification result}
+
+\medskip
+\noindent Suppose treatment $D_i$ is randomly assigned so that $(Y_{1i}, Y_{0i}) \indep D_i$.
+
+\begin{enumerate}[label=(\alph*)]
+\item Starting from the ATE, $\tau = \E[Y_{1i} - Y_{0i}]$, show step by step that $\tau$ equals the difference-in-means estimand $\E[Y_i \mid D_i=1] - \E[Y_i \mid D_i=0]$.  At each step, name which assumption you are using (ignorability or consistency).
+
+\vspace{3.5cm}
+
+\item Does this identification result also hold for the ATT?  That is, does $\E[Y_{1i} - Y_{0i} \mid D_i = 1] = \E[Y_i \mid D_i=1] - \E[Y_i \mid D_i=0]$ under the same assumption? Try it out.
+
+\vspace{2.5cm}
+\end{enumerate}
+
+%%% QUESTION 2 %%%
+\noindent\textbf{Question 2: Fisher's exact test}
+
+\medskip
+\noindent Six patients are randomly assigned to drug ($D=1$) or placebo ($D=0$), with exactly 3 treated.  The observed outcomes are:
+
+\begin{center}
+\begin{tabular}{c c c}
+\toprule
+$i$ & $D_i$ & $Y_i$ \\
+\midrule
+1 & 1 & 7 \\
+2 & 1 & 4 \\
+3 & 1 & 5 \\
+4 & 0 & 2 \\
+5 & 0 & 3 \\
+6 & 0 & 1 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{enumerate}[label=(\alph*)]
+\item Compute $\hat\tau_{\text{obs}}$ (the observed difference in means).
+
+\vspace{1.5cm}
+
+\item Under the sharp null $H_0: Y_{1i} = Y_{0i}$ for all $i$, fill in the full science table (both potential outcomes for every unit).
+
+\vspace{2.5cm}
+
+\item How many distinct assignments of exactly 3 out of 6 to treatment are there?
+
+\vspace{1cm}
+
+\item Pick two alternative assignments and compute $\hat\tau(\omega)$ for each under the sharp null.
+
+\vspace{2.5cm}
+
+\item Without enumerating all of them: would you expect the two-sided $p$-value to be small or large?  Why?
+
+\vspace{2cm}
+\end{enumerate}
+
+\bigskip
+
+%%% QUESTION 3 %%%
+\noindent\textbf{Question 3: Design and analysis choices}
+
+\begin{enumerate}[label=(\alph*)]
+\item You run an experiment where treatment is assigned at the village level but outcomes are measured per individual.  Your HC2 standard errors treat each individual as independent.  What goes wrong, and what should you use instead?
+
+\vspace{2.5cm}
+
+\item You have a strong pre-treatment predictor of your outcome (e.g., last year's test score).  Name two ways to exploit it to improve precision, and say which is a \textit{design} choice vs.\ an \textit{analysis} choice.
+
+\vspace{3cm}
+
+\item A colleague runs \texttt{lm(Y $\sim$ D + X)} in a randomized experiment.  Under what condition on treatment effects is this fine?  What would you recommend instead, and why?
+
+\vspace{3cm}
+\end{enumerate}
+
+\end{document}
