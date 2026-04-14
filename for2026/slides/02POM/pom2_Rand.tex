@@ -582,15 +582,107 @@ Solid line: observed $\hat\tau$.  Shaded: values at least as extreme $\Rightarro
 \begin{enumerate}
 \item<2-> \textbf{Clustered assignment.}  Treatment assigned at group level (village, school, precinct).  This inflates the \textit{actual} variance of $\hat\tau$ --- you have less independent information than $N$ suggests.
 \medskip
-\item<3-> \textbf{Correlated residuals.}  Even with individual assignment, within-group correlation in $\epsilon_i$ makes standard SEs \textit{too small} --- the SE \textit{estimate} is wrong, even if actual variance is fine.
+\item<3-> \textbf{Correlated residuals.}  Suppose there are cluster level influences, $U_c$, driving within-group correlation in $\epsilon_i$. When combined with cluster-assignment or non-random assignment allowing $D$ correlated with $U_c$ within clusters, this will make HC SE wrong. 
 \end{enumerate}
 
-\medskip
-\onslide<4-> The dangerous case is \textbf{both at once}: a cluster-level component in $Y$ \textit{and} no within-cluster treatment variation to cancel it out.
 \end{frame}
 
 
-\begin{frame}{Cluster-Robust SEs}
+\begin{frame}{A DGP for Clustering}
+\small
+\onslide<1-> Units $i$ belong to clusters $c \in \{1,\ldots,C\}$:
+\vspace{-4pt}
+\[
+Y_i = \tau\, D_i + U_{c(i)} + \varepsilon_i
+\]
+\vspace{-14pt}
+\begin{itemize}
+\footnotesize
+\item $U_c$ is a \textbf{cluster-level} component (precinct culture, school quality, \ldots)
+\item $\varepsilon_i$ is individual-level noise, independent across units
+\end{itemize}
+
+\medskip
+\onslide<2-> \textbf{Individual-level} randomization: each cluster has both treated and control units.  The within-cluster DIM cancels $U_c$ from the comparison --- both arms share the same $U_c$.
+
+\medskip
+\onslide<3-> \textbf{Cluster-randomization}: $D_i = D_{c(i)}$.  Now in any given sample, $U_c$ and $D$ are correlated (the treated clusters happen to have higher or lower $U_c$ than the control clusters), shifting $\hat\tau$ away from $\tau$.  Across samples that shift changes direction, inflating $\Var(\hat\tau)$.
+
+\medskip
+\onslide<4-> \textbf{Design effect} quantifies the loss.  With average cluster size $m$ and intra-cluster correlation $\rho$ (fraction of $\Var(Y)$ from $U_c$):
+\vspace{-4pt}
+\[
+\mathrm{DEFF} = 1 + (m-1)\rho, \qquad
+N_{\mathrm{eff}} = \frac{N}{\mathrm{DEFF}}.
+\]
+\vspace{-14pt}
+
+\onslide<5-> \footnotesize Example: $N = 1000$, $m = 20$, $\rho = 0.2 \Rightarrow \mathrm{DEFF} = 1 + 19 \times 0.2 = 4.8$, so $N_{\mathrm{eff}} \approx 208$.
+\end{frame}
+
+
+\begin{frame}{Simulation: Simple DIM}
+\small
+\onslide<1-> Running example: a voter-turnout experiment with $N = 1000$ voters
+across 50 precincts, $\tau = 0.01$.
+\begin{center}
+\includegraphics[width=0.65\textwidth]{images/sim_simple.pdf}
+\end{center}
+\footnotesize
+\begin{itemize}
+\item<2-> Blue: sampling distribution of $\hat\tau$ under individual-level randomization.
+\item<2-> SD(actual) = 0.016; Mean HC2 SE = 0.016. \checkmark
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Simulation: Cluster-Randomize at the Precinct Level}
+\small
+\onslide<1-> Same DGP, but now everyone in a precinct gets the same $D$.
+\begin{center}
+\includegraphics[width=0.65\textwidth]{images/sim_clustered.pdf}
+\end{center}
+\footnotesize
+\onslide<2->
+\begin{itemize}
+\item Red: sampling distribution under cluster-randomization --- much wider!
+\item SD(actual) = 0.028, but Mean HC2 SE = 0.016. \textbf{HC2 is wrong.}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{The SE Is Wrong --- but CR-SEs Fix It}
+\small
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Design / Estimator & SD(actual) & HC2 SE & CR-SE (precinct) \\
+\midrule
+Simple DIM                              & 0.016 & 0.016 & 0.016 \\
+Cluster-randomized                      & \textbf{0.028} & \textbf{0.016} & \textbf{0.028} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\footnotesize
+\onslide<2->
+\begin{itemize}
+\item HC2 assumes independent residuals.  But $U_c$ + cluster-assignment
+  means residuals within a cluster are \textbf{identical} in their $U_c$
+  component and identical in $D$ --- the worst case for dependence.
+\item<3-> Cluster-robust SE (clustered at precinct level) recovers the
+  actual sampling variance.  In R:\\
+  \texttt{\quad sandwich::vcovCL(fit, cluster = precinct\_id)}
+\item<4-> $U_c$ type influences can mess up HC SEs \textbf{without} cluster-assignment if $cov(U_c,D) \neq 0$ within clusters
+\begin{itemize}
+\footnotesize
+\item issue in non-randomized setting (e.g. observational panel data)
+\item occurs even if $U_c$ observed, e.g. cluster-level covariates. 
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Cluster-Robust SEs: The Formula}
 \small
 \onslide<1-> The cluster-robust (``CR'') sandwich estimator:
 \[
@@ -606,8 +698,8 @@ where $\X_c$, $\hat\epsilon_c$ are the rows and residuals for cluster $c$.\\
 \begin{itemize}
 \footnotesize
 \item<3-> Cluster on the source of dependence in your residuals, not on every grouping you can think of.
-\item<4-> With few clusters ($C \lesssim 30$--$50$), CR-SEs are downward biased. Alternatives: wild cluster bootstrap (\texttt{fwildclusterboot} in R), randomization inference at the cluster level, or aggregate to cluster means.
-\item<5-> If there is \textit{no} cluster-level component in $Y$, or if treatment varies within cluster so the component cancels, then HC0 is fine --- CR-SEs buy nothing and widen CIs.
+\item<4-> With few clusters ($C \lesssim 30$--$50$), CR-SEs are downward biased.  Alternatives: wild cluster bootstrap (\texttt{fwildclusterboot} in R), RI at the cluster level, or aggregate to cluster means.
+%\item<5-> If there is \textit{no} cluster-level component in $Y$, or if treatment varies within cluster so the component cancels, then HC2 is fine --- CR-SEs buy nothing and widen CIs.
 \end{itemize}
 \end{frame}
 
@@ -637,7 +729,7 @@ where $\X_c$, $\hat\epsilon_c$ are the rows and residuals for cluster $c$.\\
 \end{frame}
 
 
-\begin{frame}{Blocking}
+\begin{frame}{Blocking: Build the Balance In}
 \small
 \onslide<1-> \textbf{Idea}: pre-stratify on a strong predictor of $Y$, then randomize treatment \textit{within} each stratum (block).\\
 \medskip
@@ -654,41 +746,108 @@ where $\X_c$, $\hat\epsilon_c$ are the rows and residuals for cluster $c$.\\
 \hat\tau_B = \sum_{j=1}^J \frac{N_j}{N}\, \hat\tau_j
 \]
 
-\onslide<6-> Equivalently (when treatment probability is the same in every block): OLS with block fixed effects.\\
+\onslide<6-> Equivalently (when treatment probability is the same in every block): OLS with block fixed effects.
+\end{frame}
+
+
+\begin{frame}{Estimation: regression with block dummies}
+\small
+\onslide<1-> Two regressions for the same data:
+\vspace{-4pt}
+\begin{align*}
+\text{(CR)} \quad Y_i &= \alpha + \tau_{\mathrm{CR}}\, D_i + \textcolor{red}{\varepsilon_i} \\[4pt]
+\text{(BR)} \quad Y_i &= \alpha + \tau_{\mathrm{BR}}\, D_i + \sum_{j=2}^J \beta_j B_{j[i]} + \textcolor{blue}{\varepsilon^{*}_i}
+\end{align*}
+where $B_{j[i]}$ is a dummy for the $j$-th block.
 
 \medskip
-\onslide<7-> \footnotesize \textbf{Rule of thumb}: block on the strongest predictor of $Y$ you have.  A pre-treatment version of the outcome is ideal.  Blocking on something unrelated to $Y$ costs nothing but gains nothing.
+\onslide<2-> Under iid sampling, the sampling variances are:
+\vspace{-4pt}
+\[
+\V(\hat\tau_{\mathrm{CR}}) = \frac{\textcolor{red}{\sigma^2_{\varepsilon}}}{\sum_i (D_i - \bar D)^2}, \qquad
+\V(\hat\tau_{\mathrm{BR}}) = \frac{\textcolor{blue}{\sigma^2_{\varepsilon^{*}}}}{\sum_i (D_i - \bar D)^2\,(1 - R^2_D)}
+\]
+where $R^2_D$ is from regressing $D$ on the block dummies.
+
+\medskip
+\onslide<3-> \footnotesize When treatment probability is equal in every block, $R^2_D = 0$ and the denominators match.  So we get pure benefit from $\textcolor{blue}{\sigma^2_{\varepsilon^{*}}} < \textcolor{red}{\sigma^2_{\varepsilon}}$ --- the residual variance after block dummies absorb between-block variation in $Y$.
+
+\medskip
+\onslide<4-> \footnotesize (DoF cost: $n{-}k{-}1$ vs $n{-}2$ in denominator of $\widehat\sigma^2$.  Negligible unless many, small blocks.)
 \end{frame}
+
+
+\begin{frame}{Simulation: + Blocking}
+\small
+\onslide<1-> Block on quartiles of a pre-treatment predictor (e.g., \texttt{past\_turnout}).
+\begin{center}
+\includegraphics[width=0.65\textwidth]{images/sim_blocked.pdf}
+\end{center}
+\footnotesize
+\begin{itemize}
+\item<2-> Green: distribution of $\hat\tau$ under blocking.
+\item<2-> SD(actual) = 0.011; tighter than simple DIM (0.016) --- and dramatically tighter than cluster-randomized (0.028).
+\item<3-> The gain: blocks balance important $X$ in every sample. 
+\end{itemize}
+\end{frame}
+
+
+%\begin{frame}{When Does Blocking Help Most?}
+%\small
+%\begin{itemize}
+%\item<1-> Blocking helps \textbf{a lot} when the blocking variable strongly
+%  predicts $Y$.  Within-block variation in $Y$ is small $\Rightarrow$
+%  within-block DIM is sharp.
+%\medskip
+%\item<2-> Blocking on something \textit{unrelated} to $Y$ is free
+%  (except a small DoF cost) but useless.
+%\medskip
+%\item<3-> In our simulation, large gain because
+%  $\mathrm{cor}(\text{past\_turnout}, \text{turnout}) \approx 0.8$.
+%\medskip
+%\item<4-> \textbf{Rule of thumb}: block on the strongest predictor of
+%  $Y$ you have.  A pre-treatment version of the outcome is ideal.
+%\end{itemize}
+%\end{frame}
 
 
 \begin{frame}{Covariate Adjustment: The Lin Estimator}
 \small
-\onslide<1-> Adjustment removes the contribution of chance covariate imbalances \textit{after} they happen (in analysis, not design).\\
-
-\medskip
-\onslide<2-> The simplest approach:
+\onslide<1-> Consider this regression:
 \[
 Y_i = \alpha + \tau D_i + \be' X_i + \epsilon_i
 \]
-This is fine in large samples, but has a small $O(1/N)$ bias (Freedman 2008).\\
-
 \medskip
 \onslide<3-> \textbf{Lin (2013)}: demean $X$ and interact with $D$:
 \[
 Y_i = \alpha + \tau_{Lin} D_i + \be_1'(X_i - \bar X) + \be_2'\, D_i \cdot (X_i - \bar X) + \epsilon_i
 \]
+\vspace{-.5cm}
 \begin{itemize}
 \footnotesize
 \item<4-> $\tau_{Lin}$ is directly interpretable as the ATE.
 \item<4-> Avoids misspecification biases under heterogeneous effects that otherwise lead to ``weird weights'' and Freedman's $O(1/N)$ bias critique.
-\item<5-> Use HC2 SEs.  Pre-specify the covariates.
+\item<5-> Use HC2 SEs.  (Pre-specify the covariates if you are worried)
 \end{itemize}
 
 \medskip
 \onslide<6-> \footnotesize Preview: this is nothing but \textit{regression imputation} / \textit{G-computation} / the \textit{T-learner} --- fit $\hat\mu_d(X)$ separately per arm, impute both POs, average.  We will return to this.\\
-
 \medskip
-\onslide<7-> \small \textbf{Best practice}: ``Block on what you can, adjust for what you can't.''  The two are complements, not substitutes.
+\onslide<7-> \small \textbf{Best practice}: ``Block on what you can, adjust for what you can't.''
+\end{frame}
+
+
+\begin{frame}{Simulation: all four designs/estimators}
+\small
+\begin{center}
+\includegraphics[width=0.72\textwidth]{images/sim_adjusted.pdf}
+\end{center}
+\footnotesize
+\begin{itemize}
+\item Orange: Lin-adjusted under individual randomization.
+\item<2-> SDs: Simple DIM = 0.016; Cluster = 0.028; Blocked = 0.011; Lin = 0.012.
+\item<3-> Blocking and Lin adjustment give similar gains here --- both exploit the same predictor (\texttt{past\_turnout}).
+\end{itemize}
 \end{frame}
 
 
