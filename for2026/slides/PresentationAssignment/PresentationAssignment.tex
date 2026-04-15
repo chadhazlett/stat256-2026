@@ -1,0 +1,162 @@
+\documentclass[xcolor=dvipsnames]{beamer}
+%\documentclass[xcolor=dvipsnames,handout]{beamer}
+\usetheme[height=7mm]{Rochester}
+\setbeamertemplate{items}[ball]
+\setbeamertemplate{blocks}[rounded][shadow=true]
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{times}
+\usepackage[T1]{fontenc}
+\usepackage{inconsolata}
+
+\usetheme{Warsaw}
+\definecolor{someblue}{rgb}{0,.1,0.8}
+\definecolor{dgreen}{rgb}{0,.6,0.8}
+
+\title{Stat 256: Causality}
+\date{Spring 2026}
+\subtitle[ ]{The Advanced Topic Presentation (``You teach!'')}
+\author{\textbf{Instructor}: Chad Hazlett}
+\institute[UCLA]{UCLA\\[1ex]}
+
+\useoutertheme{infolines}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%% ============================================================
+%% MOTIVATION
+%% ============================================================
+
+\begin{frame}{Why ``You teach!''?}
+\begin{itemize}
+    \item<1-> Causal inference is a big field. You're getting the tools to dig deeper.
+    \medskip
+    \item<2-> You teach the class for 25 minutes about a cool topic: synthesized, well-conveyed review of the topic, not a report on a few papers.
+    \medskip
+    \item<4-> Benefits:
+    \begin{itemize}
+        \item You learn a topic deeply by teaching it.
+        \item Your classmates get to learn it from you.
+        \item Practice with teaching, presenting.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+%\begin{frame}{Goals of the assignment}
+%\small
+%\begin{itemize}
+%    \item<1-> \textbf{Identification first.} Explain the method the way we do in this class: what is the estimand, what are the assumptions, in PO and DAG language where possible.
+%    \bigskip
+%    \item<2-> \textbf{Credibility.} When would you believe it? When would you not? Where does it sit relative to what we've learned?
+%    \bigskip
+%    \item<3-> \textbf{Pedagogy.} Your classmates should leave able to recognize the method in the wild and evaluate it critically.
+%    \bigskip
+%    \item<4-> \textbf{Honesty.} The method you review doesn't have to be a hero... the open challenges are the best part. 
+%\end{itemize}
+%\end{frame}
+
+%% ============================================================
+%% LOGISTICS
+%% ============================================================
+
+\begin{frame}{Logistics at a glance}
+\begin{itemize}
+    \item<1-> \textbf{Groups of 2--3} (occasional solos by permission).
+    \medskip
+    \item<2-> \textbf{25-minute lecture + 5 minutes Q\&A}, in class.
+    \medskip
+    \item<3-> \textbf{Scheduled:} Weeks 8--10 (2 groups per class day).
+    \medskip
+    \item<4-> \textbf{Everyone presents.} Divide the talking roughly evenly.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{What you turn in}
+\begin{itemize}
+    \item<1-> The lecture itself (slides + delivery).
+    \medskip
+    \item<2-> A one-page in-class activity
+    \medskip
+    \item<3-> A short written tutorial on the topic. 
+    \begin{itemize}
+    \item<4-> Think of this as a written record of the lecture and something a future student should read to understand your topic from scratch.
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+
+%% ============================================================
+%% GUIDELINES / REMINDERS
+%% ============================================================
+
+\begin{frame}{Guidelines and reminders}
+\small
+\begin{itemize}
+    \item<1-> Teach a topic, don't summarize papers.
+        \begin{itemize}
+    	\item A running example, real or simulated, is almost essential
+    	\item Build intuition where you can...make it make sense.
+    	\item Show the failure modes.
+    	\end{itemize}
+    \item<2-> Assumptions front and center.
+    \begin{itemize}
+    \item<3-> Do not list assumptions without understanding them.
+    \end{itemize}
+    \item<4-> Add your own worries, extensions, questions if you can.
+    \item<5-> 25 minutes is short. Rehearse.
+\end{itemize}
+\end{frame}
+
+
+%% ============================================================
+%% TOPIC LIST
+%% ============================================================
+
+\begin{frame}{Preliminary topic list}
+There are many directions to look, but a few:
+\small
+\begin{itemize}
+    \item<1-> Causal inference under interference / networks
+    \item<2-> Transportability and external validity
+    \item<3-> Heterogeneous effects and CATE estimation
+    \item<4-> Negative controls, proximal inference, placebo-based adjustment    
+    \item<5-> Causes of effects: attribution, necessity, sufficiency (PN/PS)      
+    \item<6-> Efficiency and flexibility in covariate adjustment (DML, TMLE, AIPW, influence functions, semi-parametric efficiency)
+    \item<7-> Synthetic control extensions (generalized SC, matrix completion)
+    \item<8-> Censorship, survival, missingness
+    \item<9-> Time-varying treatments, mediation, sequential $g$-computation, marginal structural models \emph{(a lot --- scope it down!)}
+    \item<10-> \textbf{A topic you are excited about --- pitch me!}
+\end{itemize}
+\end{frame}
+
+%% ============================================================
+%% NEXT STEPS
+%% ============================================================
+
+\begin{frame}{Timeline}
+\begin{itemize}
+    \item<1-> \textbf{This week (by Monday 20 April)}
+    \begin{itemize}
+        \item Find your group (2--3 people); solo by permission;
+        \item rank your top 3 topic choices (including your own); I'll send a form. 
+	\end{itemize}
+	\medskip
+    \item<2-> \textbf{Week 6}
+    \begin{itemize}
+        \item Share an outline, meet with me. 
+    \end{itemize}
+\medskip
+    \item<3-> \textbf{Weeks 8--10:} in-class presentations.
+    \medskip
+    \item<4-> \textbf{Finals week:} written tutorial due.
+    \end{itemize}
+    \medskip
+    \onslide<5-> Come talk to me in office hours (Wed 3:30--4:45, Bunche 3264) or another time if you're stuck choosing a topic or a group.
+
+\end{frame}
+
+\end{document}

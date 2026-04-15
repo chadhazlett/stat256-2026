@@ -20,3 +20,9 @@ title: Slides
 | Difference-in-Differences | [PDF](pdf/slides/DID.pdf) | |
 | Sensitivity Analysis | [PDF](pdf/slides/Sensitivity.pdf) | |
 -->
+
+# Presentations
+
+| Topic | Slides |
+|-------|--------|
+| Advanced Topic Presentation ("You teach!") | [PDF](pdf/slides/PresentationAssignment.pdf) |
