@@ -12,9 +12,9 @@ title: Slides
 | DAGs & SCMs, Part 2 | [PDF](pdf/slides/DAGandSCM_part2_handout.pdf) | [PDF](pdf/activities/activity02_dags_part2.pdf) |
 | Potential Outcomes | [PDF](pdf/slides/pom1_handout.pdf) | [PDF](pdf/activities/activity03_pom.pdf) |
 | Experiments | [PDF](pdf/slides/pom2_Rand_handout.pdf) | [PDF](pdf/activities/activity04_experiments.pdf) |
+| Selection on Observables, Part 1 | [PDF](pdf/slides/SOO_part1_handout.pdf) | [PDF](pdf/activities/activity05_soo_ID.pdf) |
 
 <!-- Uncomment as the quarter progresses:
-| Selection on Observables | [PDF](pdf/slides/CI.pdf) | |
 | Instrumental Variables | [PDF](pdf/slides/IV.pdf) | |
 | Regression Discontinuity | [PDF](pdf/slides/RDD.pdf) | |
 | Difference-in-Differences | [PDF](pdf/slides/DID.pdf) | |
