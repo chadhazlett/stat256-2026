@@ -80,31 +80,6 @@ $$\tau_{\text{ATE}} = \E[Y_i \mid D_i\!=\!1] - \E[Y_i \mid D_i\!=\!0].$$
 \end{frame}
 
 
-\begin{frame}{The First Commandment of Causal Inference}
-\small
-\onslide<1->
-\begin{center}
-\large \textit{No causal claim without a supporting}\\[4pt]
-\textit{causal assumption.}
-\end{center}
-
-\bigskip
-\onslide<2-> The assumption does the identifying work. The estimator is secondary.\\
-
-\medskip
-\onslide<3-> Corollaries:
-\begin{itemize}
-\footnotesize
-\item<3-> ``We used matching'' is not a causal argument.
-\item<4-> ``We controlled for everything we could think of'' is not a causal argument.
-\item<5-> ``We used machine learning to pick controls'' is not a causal argument.
-\end{itemize}
-
-\bigskip
-\onslide<6-> All of these are \textit{estimation} choices. They serve a causal claim only if the underlying \textit{identification assumption} is credible.
-\end{frame}
-
-
 \begin{frame}{Setting}
 \small
 \onslide<1->
@@ -115,9 +90,6 @@ $$\tau_{\text{ATE}} = \E[Y_i \mid D_i\!=\!1] - \E[Y_i \mid D_i\!=\!0].$$
 \item Pre-treatment covariates: $X_i$ (a vector)
 \item Quantity of interest: $\tau_{\text{ATE}} = \E[Y_{1i} - Y_{0i}]$ (or $\tau_{\text{ATT}}$)
 \end{itemize}
-
-\bigskip
-\onslide<2-> A covariate $X$ is a \textbf{confounder} if it is associated with both $D$ and the potential outcomes $Y_d$.
 \end{frame}
 
 
@@ -534,7 +506,7 @@ $$\hat\tau_{\text{ATE}} = \frac{1}{4}\big(2 + 5 + 10 + 22\big) = 9.75$$
 \begin{itemize}
 \item<1-> \textbf{CI/SOO is an assumption, not a procedure.}  ``No unmeasured confounders'' is a strong, unverifiable claim about the world.
 \medskip
-\item<2-> \textbf{CI and the backdoor criterion are the same statement} in different alphabets.  Adjustment formula $=$ stratification estimator.
+\item<2-> \textbf{CI and the backdoor criterion are the same statement} in different languages.  Adjustment formula $=$ stratification estimator.
 \medskip
 \item<3-> \textbf{Credibility comes from the story}, not the data.
 \medskip
