@@ -1,0 +1,104 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{enumitem}
+\usepackage{booktabs}
+
+\newcommand{\indep}{{\bot\negthickspace\negthickspace\bot}}
+\DeclareMathOperator{\E}{\mathbb{E}}
+
+\pagestyle{plain}
+
+\begin{document}
+
+\begin{center}
+{\Large \textbf{Statistics 256: Causality}} \\[6pt]
+{\large In-class Activity 6: Selection on Observables --- Estimation}
+\end{center}
+
+\vspace{4pt}
+\noindent\textbf{Name(s):} \hrulefill
+
+\vspace{14pt}
+
+%%% QUESTION 1 %%%
+\noindent\textbf{Question 1: One target, many roads}
+
+\medskip
+\noindent Under conditional ignorability, every estimator we covered (subclassification, matching, PS-matching, IPW, balancing weights, regression imputation) targets the same population object:
+\[
+  \E_{X \sim F}\bigl[\mu_1(X) - \mu_0(X)\bigr],
+\qquad \text{where } \mu_d(X) = \E[Y \mid X, D{=}d].
+\]
+
+\begin{enumerate}[label=(\alph*)]
+\item Explain in 1--2 sentences how this object is \textit{akin to conditioning on $X$}: what is the distribution of $X$ over which treated and controls get compared here, and how does that differ from the plain difference in means $\E[Y \mid D{=}1] - \E[Y \mid D{=}0]$?
+
+\vspace{3.5cm}
+
+\item If we set $F = p(X \mid D = 1)$, what estimand does this object target?
+
+\vspace{1.8cm}
+\end{enumerate}
+
+
+%%% QUESTION 2 %%%
+\noindent\textbf{Question 2: Does any of this fix CI/SOO?}
+
+\medskip
+\noindent Suppose there is an unobserved confounder $U \notin X$. Which of the following methods deliver an unbiased $\widehat\tau$? \textit{Tick all that apply.}
+
+\medskip
+\begin{tabular}{p{0.4cm}l}
+$\square$ & IPW with a correctly specified propensity score on $X$ \\
+$\square$ & Entropy balancing on all observed $X$ \\
+$\square$ & Lin regression with full $D \times X$ interactions \\
+$\square$ & Doubly-robust AIPW \\
+$\square$ & None of the above \\
+\end{tabular}
+
+\medskip
+\noindent In one sentence, why?
+
+\vspace{2cm}
+
+\clearpage
+
+%%% QUESTION 3 %%%
+\noindent\textbf{Question 3: ATT vs ATE}
+
+\medskip
+\noindent Your control pool is huge and very different from your treated units (think LaLonde: 2{,}490 PSID controls, 185 NSW treated). In 1--2 sentences, why might ATT be easier to estimate well than ATE here?
+
+\vspace{4cm}
+
+
+%%% QUESTION 4 %%%
+\noindent\textbf{Question 4: Why doesn't matching always work?}
+
+\medskip
+\noindent With more than one continuous variable in the mix, even after carefully picking the nearest control to each treated unit on $X$, matching can give a biased $\widehat\tau$. Why? (There is one core reason, and one thing that amplifies it quickly in higher dimensions.)
+
+\vspace{4cm}
+
+
+%%% QUESTION 5 %%%
+\noindent\textbf{Question 5: Method-to-data fit}
+
+\medskip
+\noindent For each setting, name a method you'd reach for first, and one you'd avoid. One sentence each.
+
+\medskip
+\noindent (a) $X$ is two binary covariates; $n = 500$ in each arm.
+
+\vspace{2.5cm}
+
+\noindent (b) $X$ has 30 continuous covariates; $n_1 = 150$, $n_0 = 5{,}000$; modest overlap.
+
+\vspace{2.5cm}
+
+\noindent (c) $X$ has good overlap, but $Y$'s dependence on $X$ is strongly nonlinear and you don't know the form.
+
+\vspace{2.5cm}
+
+\end{document}
