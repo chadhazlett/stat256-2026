@@ -27,6 +27,8 @@ suppressPackageStartupMessages({
   library(sandwich)
   library(ggplot2)
   library(xgboost)
+  library(dplyr)
+  library(patchwork)
 })
 
 set.seed(20260421)
@@ -294,29 +296,110 @@ p_est <- ggplot(res, aes(y = method, x = estimate)) +
 ggsave("figures/lalonde_estimates.pdf", p_est, width = 7.4, height = 5.1)
 
 ## ---------- Figure B: pscore overlap --------------------------------------
-## Scale each group's density to max = 1 so both shapes are visible despite
-## the huge control mass near 0.  Keep full [0,1] range so we can see both
-## the left-tail-of-controls / right-tail-of-treated overlap story.
-ps_df <- data.frame(ps = ps,
-                    D  = factor(D, levels = c(0, 1),
-                                labels = c("PSID control (n=2,490)",
-                                           "NSW treated (n=185)")))
-p_ps <- ggplot(ps_df, aes(x = ps, fill = D, colour = D)) +
-  geom_density(aes(y = after_stat(scaled)), alpha = 0.45,
-               adjust = 1.2, bw = "nrd0") +
-  scale_fill_manual(values   = c("#c62828", "#1565c0")) +
-  scale_colour_manual(values = c("#c62828", "#1565c0")) +
-  scale_x_continuous(limits = c(0, 1), breaks = seq(0, 1, 0.2)) +
-  labs(x = "Estimated propensity score  pi-hat(X)",
-       y = "Density (scaled within group)",
-       title = "Propensity-score overlap: NSW treated vs PSID controls",
-       subtitle = "Each group's density rescaled to max = 1 so both are visible.",
-       fill = NULL, colour = NULL) +
-  theme_minimal(base_size = 11) +
-  theme(legend.position = "bottom",
-        plot.title = element_text(face = "bold"),
+## Two x-panels.  Left zooms on Pr(D=1|X) < 0.05 where 91% of controls live
+## (only 9 treated there, so ATE-style reweighting would make each of those
+## 9 carry the weight of hundreds of controls).  Right shows Pr(D=1|X) >=
+## 0.05 where counts are within an order of magnitude and ATT is workable.
+## We use explicit count tables (not geom_histogram) so we can annotate
+## individual bins (treated counts as a blue strip at top of the zoom panel,
+## since the actual treated bars are too small to see next to the 1,854-
+## tall control bar in the first bin).
+
+mk_counts <- function(ps, D, brk) {
+  keep <- ps >= min(brk) & ps <= max(brk)
+  ps1 <- ps[keep]; D1 <- D[keep]
+  bin_idx <- findInterval(ps1, brk, rightmost.closed = TRUE,
+                          all.inside = TRUE)
+  tab <- as.data.frame(table(
+    bin   = factor(bin_idx, levels = seq_len(length(brk) - 1)),
+    group = factor(D1, levels = c(1, 0),
+                   labels = c("NSW treated", "PSID control"))
+  ), stringsAsFactors = FALSE)
+  tab$bin <- as.integer(tab$bin)
+  tab$lo  <- brk[tab$bin]
+  tab$hi  <- brk[tab$bin + 1]
+  tab$mid <- (tab$lo + tab$hi) / 2
+  tab$group <- factor(tab$group,
+                      levels = c("NSW treated", "PSID control"))
+  names(tab)[names(tab) == "Freq"] <- "n"
+  tab
+}
+
+brk_zoom <- seq(0, 0.05, by = 0.005)    # 10 bins of width 0.005
+brk_rest <- seq(0.05, 1.00, by = 0.025) # 38 bins of width 0.025
+
+cz <- mk_counts(ps, D, brk_zoom)
+cr <- mk_counts(ps, D, brk_rest)
+
+col_trt <- "#1565c0"; col_ctl <- "#c62828"
+pal <- c("NSW treated" = col_trt, "PSID control" = col_ctl)
+
+cz_ctl_lab <- cz |> dplyr::filter(group == "PSID control", n > 0) |>
+  dplyr::mutate(label = format(n, big.mark = ","))
+cz_trt_lab <- cz |> dplyr::filter(group == "NSW treated") |>
+  dplyr::mutate(label = as.character(n))
+
+n_tot_ctl_zoom <- sum(D == 0 & ps <  0.05)
+n_tot_trt_zoom <- sum(D == 1 & ps <  0.05)
+n_tot_ctl_rest <- sum(D == 0 & ps >= 0.05)
+n_tot_trt_rest <- sum(D == 1 & ps >= 0.05)
+
+y_max_zoom <- max(cz$n)
+
+p_zoom <- ggplot(cz, aes(x = mid, y = n, fill = group)) +
+  geom_col(position = position_dodge(width = 0.0045), width = 0.004,
+           colour = "grey20", linewidth = 0.15) +
+  geom_text(data = cz_ctl_lab,
+            aes(x = mid, y = n, label = label),
+            vjust = -0.4, size = 2.6, fontface = "bold",
+            colour = col_ctl, inherit.aes = FALSE) +
+  geom_text(data = cz_trt_lab,
+            aes(x = mid, label = label),
+            y = y_max_zoom * 1.18, size = 3.0, fontface = "bold",
+            colour = col_trt, inherit.aes = FALSE) +
+  annotate("text", x = 0.025, y = y_max_zoom * 1.28,
+           label = "treated count per bin (bars too small to see):",
+           size = 2.8, fontface = "italic", colour = col_trt) +
+  scale_fill_manual(values = pal) +
+  scale_x_continuous(limits = c(-0.002, 0.052),
+                     breaks = seq(0, 0.05, 0.01),
+                     expand = expansion(mult = c(0, 0))) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.35))) +
+  labs(x = "Pr(D=1 | X)",
+       y = "Count per 0.005 bin",
+       title = sprintf("Pr(D=1|X) < 0.05:  %d treated for %s controls",
+                       n_tot_trt_zoom,
+                       format(n_tot_ctl_zoom, big.mark = ",")),
+       fill = NULL) +
+  theme_minimal(base_size = 10) +
+  theme(legend.position = "none",
+        plot.title = element_text(face = "bold", size = 10),
         panel.grid.minor = element_blank())
-ggsave("figures/lalonde_pscore.pdf", p_ps, width = 6.8, height = 4.2)
+
+p_rest <- ggplot(cr, aes(x = mid, y = n, fill = group)) +
+  geom_col(position = position_dodge(width = 0.022), width = 0.02,
+           colour = "grey20", linewidth = 0.15) +
+  scale_fill_manual(values = pal) +
+  scale_x_continuous(limits = c(0.05, 1.0), breaks = seq(0.1, 1.0, 0.1)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1))) +
+  labs(x = "Pr(D=1 | X)",
+       y = "Count per 0.025 bin",
+       title = sprintf("Pr(D=1|X) >= 0.05:  %d treated for %d controls",
+                       n_tot_trt_rest, n_tot_ctl_rest),
+       fill = NULL) +
+  theme_minimal(base_size = 10) +
+  theme(legend.position = c(0.5, 0.97), legend.justification = c(0.5, 1),
+        legend.direction = "horizontal",
+        legend.background = element_rect(fill = "white", colour = NA),
+        plot.title = element_text(face = "bold", size = 10),
+        panel.grid.minor = element_blank())
+
+p_ps <- p_zoom + p_rest + plot_layout(widths = c(1, 2.2)) +
+  plot_annotation(
+    title = "P-score overlap: NSW treated vs PSID controls",
+    theme = theme(plot.title = element_text(face = "bold", size = 12)))
+
+ggsave("figures/lalonde_pscore.pdf", p_ps, width = 10.2, height = 4.2)
 
 ## ---------- Figure C: pre / post balance (entropy balancing) --------------
 smd <- function(x, D, w = NULL) {
