@@ -14,11 +14,11 @@ title: Slides
 | Experiments | [PDF](pdf/slides/pom2_Rand_handout.pdf) | [PDF](pdf/activities/activity04_experiments.pdf) |
 | Selection on Observables, Part 1 | [PDF](pdf/slides/SOO_part1_handout.pdf) | [PDF](pdf/activities/activity05_soo_ID.pdf) |
 | Selection on Observables, Part 2 | [PDF](pdf/slides/SOO_part2_handout.pdf) | [PDF](pdf/activities/activity06_soo_estimation.pdf) |
-| Difference-in-Differences | [PDF](pdf/slides/DID_handout.pdf) | |
 
 <!-- Uncomment as the quarter progresses:
 | Instrumental Variables | [PDF](pdf/slides/IV.pdf) | |
 | Regression Discontinuity | [PDF](pdf/slides/RDD.pdf) | |
+| Difference-in-Differences | [PDF](pdf/slides/DID.pdf) | |
 | Sensitivity Analysis | [PDF](pdf/slides/Sensitivity.pdf) | |
 -->
 
